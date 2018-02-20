@@ -1,0 +1,328 @@
+object Form1: TForm1
+  Left = 238
+  Height = 337
+  Top = 132
+  Width = 876
+  HorzScrollBar.Page = 875
+  VertScrollBar.Page = 336
+  ActiveControl = Edit1
+  Caption = 'Form1'
+  ClientHeight = 337
+  ClientWidth = 876
+  OnCreate = FormCreate
+  object GroupBox1: TGroupBox
+    Left = 8
+    Height = 315
+    Top = 13
+    Width = 426
+    Caption = 'Natuerliche Zahlen'
+    ClientHeight = 294
+    ClientWidth = 422
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 8
+      Height = 17
+      Top = 7
+      Width = 24
+      Caption = 'a:='
+      ParentColor = False
+    end
+    object Label2: TLabel
+      Left = 8
+      Height = 17
+      Top = 40
+      Width = 24
+      Caption = 'b:='
+      ParentColor = False
+    end
+    object Label3: TLabel
+      Left = 9
+      Height = 17
+      Top = 201
+      Width = 68
+      Caption = 'Ergebnis:'
+      ParentColor = False
+    end
+    object Edit1: TEdit
+      Left = 59
+      Height = 23
+      Top = 7
+      Width = 353
+      OnChange = Edit1Change
+      TabOrder = 0
+      Text = '1723645876581734555532847625181233423'
+    end
+    object Edit2: TEdit
+      Left = 59
+      Height = 22
+      Top = 37
+      Width = 353
+      OnChange = Edit2Change
+      TabOrder = 1
+      Text = '4236546721354'
+    end
+    object Button1: TButton
+      Left = 8
+      Height = 48
+      Top = 64
+      Width = 404
+      Caption = 'a und b uebernehmen'
+      OnClick = Button1Click
+      TabOrder = 2
+    end
+    object Button2: TButton
+      Left = 8
+      Height = 26
+      Top = 120
+      Width = 58
+      Caption = 'a + b'
+      Enabled = False
+      OnClick = Button2Click
+      TabOrder = 3
+    end
+    object Button3: TButton
+      Left = 70
+      Height = 26
+      Top = 120
+      Width = 58
+      Caption = 'a - b'
+      Enabled = False
+      OnClick = Button3Click
+      TabOrder = 4
+    end
+    object Button4: TButton
+      Left = 134
+      Height = 26
+      Top = 120
+      Width = 58
+      Caption = 'a * b'
+      Enabled = False
+      OnClick = Button4Click
+      TabOrder = 5
+    end
+    object Button5: TButton
+      Left = 198
+      Height = 26
+      Top = 120
+      Width = 58
+      Caption = 'a div b'
+      Enabled = False
+      OnClick = Button5Click
+      TabOrder = 6
+    end
+    object Button6: TButton
+      Left = 262
+      Height = 26
+      Top = 120
+      Width = 64
+      Caption = 'a mod b'
+      Enabled = False
+      OnClick = Button6Click
+      TabOrder = 7
+    end
+    object Button7: TButton
+      Left = 86
+      Height = 26
+      Top = 160
+      Width = 72
+      Caption = 'ggT(a,b)'
+      Enabled = False
+      OnClick = Button7Click
+      TabOrder = 8
+    end
+    object Button8: TButton
+      Left = 8
+      Height = 26
+      Top = 160
+      Width = 70
+      Caption = 'kgV(a,b)'
+      Enabled = False
+      OnClick = Button8Click
+      TabOrder = 9
+    end
+    object Edit3: TEdit
+      Left = 8
+      Height = 22
+      Top = 224
+      Width = 404
+      TabOrder = 10
+    end
+  end
+  object GroupBox2: TGroupBox
+    Left = 440
+    Height = 315
+    Top = 13
+    Width = 426
+    Caption = 'Rationale Zahlen'
+    ClientHeight = 294
+    ClientWidth = 422
+    TabOrder = 1
+    object Label4: TLabel
+      Left = 8
+      Height = 17
+      Top = 7
+      Width = 23
+      Caption = 'c:='
+      ParentColor = False
+    end
+    object Label5: TLabel
+      Left = 8
+      Height = 17
+      Top = 40
+      Width = 24
+      Caption = 'd:='
+      ParentColor = False
+    end
+    object Label6: TLabel
+      Left = 9
+      Height = 17
+      Top = 201
+      Width = 68
+      Caption = 'Ergebnis:'
+      ParentColor = False
+    end
+    object Label7: TLabel
+      Left = 228
+      Height = 17
+      Top = 8
+      Width = 6
+      Caption = '/'
+      ParentColor = False
+    end
+    object Label8: TLabel
+      Left = 228
+      Height = 17
+      Top = 37
+      Width = 6
+      Caption = '/'
+      ParentColor = False
+    end
+    object Label9: TLabel
+      Left = 206
+      Height = 17
+      Top = 226
+      Width = 6
+      Caption = '/'
+      ParentColor = False
+    end
+    object Edit4: TEdit
+      Left = 59
+      Height = 23
+      Top = 7
+      Width = 164
+      OnChange = Edit4Change
+      TabOrder = 0
+      Text = '17236458765817345'
+    end
+    object Edit5: TEdit
+      Left = 59
+      Height = 22
+      Top = 37
+      Width = 164
+      OnChange = Edit5Change
+      TabOrder = 1
+      Text = '4236546721354'
+    end
+    object Button9: TButton
+      Left = 8
+      Height = 48
+      Top = 61
+      Width = 404
+      Caption = 'c und d uebernehmen'
+      OnClick = Button9Click
+      TabOrder = 2
+    end
+    object Button10: TButton
+      Left = 8
+      Height = 26
+      Top = 120
+      Width = 58
+      Caption = 'c + d'
+      Enabled = False
+      OnClick = Button10Click
+      TabOrder = 3
+    end
+    object Button11: TButton
+      Left = 70
+      Height = 26
+      Top = 120
+      Width = 58
+      Caption = 'c - d'
+      Enabled = False
+      OnClick = Button11Click
+      TabOrder = 4
+    end
+    object Button12: TButton
+      Left = 134
+      Height = 26
+      Top = 120
+      Width = 58
+      Caption = 'c * d'
+      Enabled = False
+      OnClick = Button12Click
+      TabOrder = 5
+    end
+    object Button13: TButton
+      Left = 198
+      Height = 26
+      Top = 120
+      Width = 58
+      Caption = 'c : d'
+      Enabled = False
+      OnClick = Button13Click
+      TabOrder = 6
+    end
+    object Edit6: TEdit
+      Left = 4
+      Height = 22
+      Top = 224
+      Width = 200
+      TabOrder = 7
+    end
+    object Edit7: TEdit
+      Left = 240
+      Height = 23
+      Top = 7
+      Width = 164
+      OnChange = Edit7Change
+      TabOrder = 8
+      Text = '635454981'
+    end
+    object Edit8: TEdit
+      Left = 240
+      Height = 20
+      Top = 37
+      Width = 164
+      OnChange = Edit8Change
+      TabOrder = 9
+      Text = '57853912122'
+    end
+    object Button14: TButton
+      Left = 8
+      Height = 26
+      Top = 152
+      Width = 85
+      Caption = 'c kuerzen'
+      Enabled = False
+      OnClick = Button14Click
+      TabOrder = 10
+    end
+    object Button15: TButton
+      Left = 101
+      Height = 26
+      Top = 152
+      Width = 85
+      Caption = 'd kuerzen'
+      Enabled = False
+      OnClick = Button15Click
+      TabOrder = 11
+    end
+    object Edit9: TEdit
+      Left = 216
+      Height = 22
+      Top = 224
+      Width = 200
+      TabOrder = 12
+    end
+  end
+end

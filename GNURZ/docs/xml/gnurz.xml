@@ -1,0 +1,610 @@
+<?xml version="1.0"?>
+<fpdoc-descriptions>
+  <package name="gnurz">
+    <!--
+  ====================================================================
+    gnurz
+  ====================================================================
+-->
+    <module name="gnurz">
+      <short/>
+      <descr/>
+      <!-- array type Visibility: default -->
+      <element name="GNZTyp">
+        <short>Datentyp für große natürliche Zahlen (GNZ)</short>
+        <descr>Datentyp für große natürliche Zahlen (GNZ)</descr>
+      </element>
+      <!-- record type Visibility: default -->
+      <element name="GRaZTyp">
+        <short>Datentyp für große rationale Zahlen (GRZ):</short>
+        <descr>Datentyp für große rationale Zahlen (GRZ):
+Wie aus dieser Deklaration hervorgeht, werden rationale Zahlen in Form von Brüchen behandelt, bei denen jeweils Nenner und Zähler große natürliche Zahlen sind. Die Zahl 3,14159 kann entsprechend durch 314159/100000 ausgedrückt werden. Dadurch werden beliebig genaue Rechnungen möglich, da wie im Beispiel 2/3=0,66666... keine Nachkommastellen abgeschnitten werden müssen und es somit zu keinen Rundungsfehlern kommt.</descr>
+      </element>
+      <!-- variable Visibility: default -->
+      <element name="GRaZTyp.nenner">
+        <short/>
+        <descr/>
+        <seealso/>
+      </element>
+      <!-- variable Visibility: default -->
+      <element name="GRaZTyp.zaehler">
+        <short/>
+        <descr/>
+        <seealso/>
+      </element>
+      <!-- object Visibility: default -->
+      <element name="TGnurz">
+        <short>GNURZ: Arithmetik zum Umgang mit (G)roßen (N)atürlichen (U)nd (R)ationalen (Z)ahlen</short>
+        <descr>GNURZ: Arithmetik zum Umgang mit (G)roßen (N)atürlichen (U)nd (R)ationalen (Z)ahlen</descr>
+      </element>
+      <!-- variable Visibility: private -->
+      <element name="TGnurz.GNZ_GlobZahlenbasis">
+        <short/>
+        <descr/>
+        <seealso/>
+      </element>
+      <!-- variable Visibility: private -->
+      <element name="TGnurz.GNZ_Karazubagrenze">
+        <short/>
+        <descr/>
+        <seealso/>
+      </element>
+      <!-- variable Visibility: private -->
+      <element name="TGnurz.Errormodus">
+        <short/>
+        <descr/>
+        <seealso/>
+      </element>
+      <!-- function Visibility: private -->
+      <element name="TGnurz.GNZBasisDezToGlobB">
+        <short/>
+        <descr/>
+        <errors/>
+        <seealso/>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZBasisDezToGlobB.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZBasisDezToGlobB.Zahl">
+        <short/>
+      </element>
+      <!-- function Visibility: private -->
+      <element name="TGnurz.GNZGlobBToBasisDez">
+        <short/>
+        <descr/>
+        <errors/>
+        <seealso/>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZGlobBToBasisDez.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZGlobBToBasisDez.Zahl">
+        <short/>
+      </element>
+      <!-- constructor Visibility: public -->
+      <element name="TGnurz.create">
+        <short/>
+        <descr/>
+        <errors/>
+        <seealso/>
+      </element>
+      <!-- procedure Visibility: public -->
+      <element name="TGnurz.ResetErrormodus">
+        <short>Setzt Errormodus auf 0 zurueck</short>
+        <descr>Setzt Errormodus auf 0 zurueck</descr>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GetErrormodus">
+        <short>Gibt 0 zuruecht, wenn kein Fehler aufgetreten ist.</short>
+        <descr>Gibt 0 zuruecht, wenn kein Fehler aufgetreten ist.</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GetErrormodus.Result">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GetKarazubagrenze">
+        <descr>Gibt die Grenze zurueck, aber der der Karazuba-Algo. der Multiplikation verwendet wird</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GetKarazubagrenze.Result">
+        <short/>
+      </element>
+      <!-- procedure Visibility: public -->
+      <element name="TGnurz.SetKazarzbagrenze">
+        <short>Setzt die Karazuba-Grenze neu.</short>
+        <descr>Setzt die Karazuba-Grenze neu.</descr>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.SetKazarzbagrenze.Grenze">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GetGlobZahlenbasis">
+        <short>Gibt die Zahlenbasis zurueck, mit der GNURZ intern(!) rechnet.</short>
+        <descr>Gibt die Zahlenbasis zurueck, mit der GNURZ intern(!) rechnet.</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GetGlobZahlenbasis.Result">
+        <short/>
+      </element>
+      <!-- procedure Visibility: public -->
+      <element name="TGnurz.SetGlobZahlenbasis">
+        <short>Setzt die Zahlenbasis von GNURZ</short>
+        <descr>Setzt die Zahlenbasis von GNURZ</descr>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.SetGlobZahlenbasis.basis">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.StrToGNZTyp">
+        <short>Wandelt eine natuerliche Zahl in string-Forum um in den Typ GNZTyp von Basis 10</short>
+        <descr>Wandelt eine natuerliche Zahl in string-Forum um in den Typ GNZTyp von Basis 10. Eingabe darf nur Zahlen enthalten.</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.StrToGNZTyp.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.StrToGNZTyp.Eingabe">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZTypToStr">
+        <short>Umkehrfunktion" zu StrToGNZTypDez</short>
+        <descr>Umkehrfunktion" zu StrToGNZTypDez</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZTypToStr.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZTypToStr.Eingabe">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.WordToGNZTyp">
+        <short>Wandelt ein dWord in eine Zahl vom GNZTyp um</short>
+        <descr>Wandelt ein dWord in eine Zahl vom GNZTyp um</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.WordToGNZTyp.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.WordToGNZTyp.WZahl">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZTypToWord">
+        <short>Wandelt GNZTyp in dWord um</short>
+        <descr>Wandelt GNZTyp in dWord um</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZTypToWord.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZTypToWord.ZahlGNZ">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZadd">
+        <short>Gibt die Summe a + b zurueck</short>
+        <descr>Gibt die Summe a + b zurueck. Rechnet mit Grossen Natuerlichen Zahlen (GNZ); Zbasis=Zahlenbasis (Dezimalsystem:Zbasis=10)</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZadd.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZadd.a">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZadd.b">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZsub">
+        <short>Rechnet Minuend-Subtrahend</short>
+        <descr>Rechnet Minuend-Subtrahend. Aus Minuent kleiner Subtrahend folgt Errormodus:=1</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZsub.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZsub.Minuent">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZsub.Subtrahend">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZmul">
+        <short/>
+        <descr/>
+        <errors/>
+        <seealso/>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZmul.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZmul.a">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZmul.b">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZmulword">
+        <short>Wie GNZmul, nur ist a vom Typ dword</short>
+        <descr>Wie GNZmul, nur ist a vom Typ dword</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZmulword.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZmulword.a">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZmulword.b">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZakleinerb">
+        <short>Prueft, ob a kleiner ist als b</short>
+        <descr>Prueft, ob a kleiner ist als b</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZakleinerb.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZakleinerb.a">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZakleinerb.b">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZagleichb">
+        <short>Prueft, ob sich a und b gleichen.</short>
+        <descr>Prueft, ob sich a und b gleichen.</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZagleichb.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZagleichb.a">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZagleichb.b">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZdiv">
+        <short>dividiert Divident durch Divisor und gibt das Ergebnis zurueck</short>
+        <descr>dividiert Divident durch Divisor und gibt das Ergebnis zurueck</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZdiv.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZdiv.Divident">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZdiv.Divisor">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZmod">
+        <short>Gibt Divident mod Divisor zurueck</short>
+        <descr>Gibt Divident mod Divisor zurueck</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZmod.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZmod.Divident">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZmod.Divisor">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZggt">
+        <short>Groesster gemeinsamer Teiler fuer grosse natuerliche Zahlen (GNZ)</short>
+        <descr>Groesster gemeinsamer Teiler fuer grosse natuerliche Zahlen (GNZ)</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZggt.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZggt.a">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZggt.b">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZkgv">
+        <short>Kleinstes gemeinsames Vielfaches fuer GNZ</short>
+        <descr>Kleinstes gemeinsames Vielfaches fuer GNZ</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZkgv.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZkgv.a">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZkgv.b">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZistgerade">
+        <short>Prueft, ob zahl mod 2 = 0</short>
+        <descr>Prueft, ob zahl mod 2 = 0</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZistgerade.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZistgerade.zahl">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZPotenz">
+        <short>Gibt Zahl^Exponent zurueck.</short>
+        <descr>Gibt Zahl^Exponent zurueck. Nach einem im Internet gefundenen Algorithmus</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZPotenz.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZPotenz.Basis">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZPotenz.Exponent">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZPotenzMod">
+        <short>Rechnet Basis^Exponent mod Modulus.</short>
+        <descr>Rechnet Basis^Exponent mod Modulus.</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZPotenzMod.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZPotenzMod.Basis">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZPotenzMod.Exponent">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZPotenzMod.Modulo">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZFakultaet">
+        <short>Gibt n! zurueck</short>
+        <descr>Gibt n! zurueck - experimentell</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZFakultaet.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZFakultaet.nFak">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZIstPrim">
+        <short>Wahr, wenn zahl Primzahl</short>
+        <descr>Wahr, wenn zahl Primzahl - experimentell</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZIstPrim.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZIstPrim.zahl">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZMillerRabin">
+        <short>Miller-Rabin Primzahltex</short>
+        <descr>Miller-Rabin Primzahltext. Wenn die Zahl den Test besteht, ist sie mit einer Wahrscheinlichkeit von (1/4)^it prim</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZMillerRabin.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZMillerRabin.zahl">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZMillerRabin.it">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZMRPrimdanach">
+        <short>Bestimmt die nach zahl nächste Primzah</short>
+        <descr>Bestimmt die nach zahl nächste Primzahl mit Hilfe des Miller-Rabin-Algorithmus</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZMRPrimdanach.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZMRPrimdanach.zahl">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZMRPrimdanach.it">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GNZZufall">
+        <short>Gibt eine Zufallszahl wieder, die kleiner ist als Obergrenze.</short>
+        <descr>Gibt eine Zufallszahl wieder, die kleiner ist als Obergrenze.</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GNZZufall.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GNZZufall.Obergrenze">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GRaZKuerzen">
+        <short>Kuerzt den Bruch</short>
+        <descr>Kuerzt den Bruch</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GRaZKuerzen.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GRaZKuerzen.Bruch">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GRaZadd">
+        <short>Rechnet a+b und kuerzt die Summe anschliessend</short>
+        <descr>Rechnet a+b und kuerzt die Summe anschliessend</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GRaZadd.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GRaZadd.a">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GRaZadd.b">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GRazsub">
+        <short>Rechnet a-b</short>
+        <descr>Wenn Minuent kleiner Subtrahend wird Errormodus:=1 gesetzt</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GRazsub.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GRazsub.Minuent">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GRazsub.Subtrahend">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GRaZmul">
+        <short>Multipliziert die Brueche miteinander</short>
+        <descr>Multipliziert die Brueche miteinander</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GRaZmul.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GRaZmul.a">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GRaZmul.b">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GRaZdiv">
+        <short>Dividiert durch Multiplikation mit dem Kehrwert</short>
+        <descr>Dividiert durch Multiplikation mit dem Kehrwert</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GRaZdiv.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GRaZdiv.Divident">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GRaZdiv.Divisor">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GRaZakleinerb">
+        <short>Gibt true zurueck, wenn a kleiner b</short>
+        <descr>Gibt true zurueck, wenn a kleiner b</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GRaZakleinerb.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GRaZakleinerb.a">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GRaZakleinerb.b">
+        <short/>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TGnurz.GRaZagleichb">
+        <short>Gibt true zurueck, wenn a gleich b</short>
+        <descr>Gibt true zurueck, wenn a gleich b</descr>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TGnurz.GRaZagleichb.Result">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GRaZagleichb.a">
+        <short/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TGnurz.GRaZagleichb.b">
+        <short/>
+      </element>
+    </module>
+    <!-- gnurz -->
+  </package>
+</fpdoc-descriptions>
