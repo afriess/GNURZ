@@ -1,4 +1,7 @@
-// (c) 2008 by Alexander Staidl
+// GNURZ-DEMO
+// Version: 1.0.1
+
+// (c) 2008-2009 by Alexander Staidl
 // Kontakt: a.staidl(at)SPAMFILTERfreenet.de
 // (bitte SPAMFILTER entfernen)
 
@@ -45,6 +48,8 @@ type
     Button7: TButton;
     Button8: TButton;
     Button9: TButton;
+    CheckBox1: TCheckBox;
+    CheckBox2: TCheckBox;
     Edit1: TEdit;
     Edit2: TEdit;
     Edit3: TEdit;
@@ -80,12 +85,21 @@ type
     procedure Button7Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
+    procedure CheckBox1Change(Sender: TObject);
+    procedure CheckBox2Change(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
+    procedure Edit1KeyPress(Sender: TObject; var Key: char);
     procedure Edit2Change(Sender: TObject);
+    procedure Edit2KeyPress(Sender: TObject; var Key: char);
     procedure Edit4Change(Sender: TObject);
+    procedure Edit4KeyPress(Sender: TObject; var Key: char);
     procedure Edit5Change(Sender: TObject);
+    procedure Edit5KeyPress(Sender: TObject; var Key: char);
     procedure Edit7Change(Sender: TObject);
+    procedure Edit7KeyPress(Sender: TObject; var Key: char);
     procedure Edit8Change(Sender: TObject);
+    procedure Edit8KeyPress(Sender: TObject; var Key: char);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
   private
     { private declarations }
@@ -108,6 +122,7 @@ begin
   a := GnurzObjekt.StrToGNZTyp(Edit1.Text);
   b := GnurzObjekt.StrToGNZTyp(Edit2.Text);
 
+  Edit3.Text:='';
   Button2.Enabled:=true;
   Button3.Enabled:=true;
   Button4.Enabled:=true;
@@ -119,57 +134,71 @@ end;
 
 procedure TForm1.Button10Click(Sender: TObject);
 var Ergebnis: GRazTyp;
+    Vorzeichen: string;
 begin
   Ergebnis := GnurzObjekt.GRaZadd(c,d);
-  
-  Edit6.Text := GnurzObjekt.GNZTypToStr(Ergebnis.zaehler);
+
+  If Ergebnis.Negativ then Vorzeichen:='-' else Vorzeichen:='';
+  Edit6.Text := Vorzeichen + GnurzObjekt.GNZTypToStr(Ergebnis.zaehler);
   Edit9.Text := GnurzObjekt.GNZTypToStr(Ergebnis.nenner);
 end;
 
 procedure TForm1.Button11Click(Sender: TObject);
 var Ergebnis: GRazTyp;
+    Vorzeichen: string;
 begin
   Ergebnis := GnurzObjekt.GRaZsub(c,d);
 
-  Edit6.Text := GnurzObjekt.GNZTypToStr(Ergebnis.zaehler);
+  If Ergebnis.Negativ then Vorzeichen:='-' else Vorzeichen:='';
+  Edit6.Text := Vorzeichen + GnurzObjekt.GNZTypToStr(Ergebnis.zaehler);
   Edit9.Text := GnurzObjekt.GNZTypToStr(Ergebnis.nenner);
 end;
 
 procedure TForm1.Button12Click(Sender: TObject);
 var Ergebnis: GRazTyp;
+    Vorzeichen: string;
 begin
   Ergebnis := GnurzObjekt.GRaZmul(c,d);
 
-  Edit6.Text := GnurzObjekt.GNZTypToStr(Ergebnis.zaehler);
+  If Ergebnis.Negativ then Vorzeichen:='-' else Vorzeichen:='';
+  Edit6.Text := Vorzeichen + GnurzObjekt.GNZTypToStr(Ergebnis.zaehler);
   Edit9.Text := GnurzObjekt.GNZTypToStr(Ergebnis.nenner);
 end;
 
 procedure TForm1.Button13Click(Sender: TObject);
 var Ergebnis: GRazTyp;
+    Vorzeichen: string;
 begin
   Ergebnis := GnurzObjekt.GRaZdiv(c,d);
 
-  Edit6.Text := GnurzObjekt.GNZTypToStr(Ergebnis.zaehler);
+  If Ergebnis.Negativ then Vorzeichen:='-' else Vorzeichen:='';
+  Edit6.Text := Vorzeichen + GnurzObjekt.GNZTypToStr(Ergebnis.zaehler);
   Edit9.Text := GnurzObjekt.GNZTypToStr(Ergebnis.nenner);
 end;
 
 procedure TForm1.Button14Click(Sender: TObject);
 var Ergebnis: GRazTyp;
+    Vorzeichen: string;
 begin
   Ergebnis := GnurzObjekt.GRaZKuerzen(c);
 
-  Edit6.Text := GnurzObjekt.GNZTypToStr(Ergebnis.zaehler);
+  If Ergebnis.Negativ then Vorzeichen:='-' else Vorzeichen:='';
+  Edit6.Text := Vorzeichen + GnurzObjekt.GNZTypToStr(Ergebnis.zaehler);
   Edit9.Text := GnurzObjekt.GNZTypToStr(Ergebnis.nenner);
 end;
 
 procedure TForm1.Button15Click(Sender: TObject);
 var Ergebnis: GRazTyp;
+    Vorzeichen: string;
 begin
   Ergebnis := GnurzObjekt.GRaZKuerzen(d);
 
-  Edit6.Text := GnurzObjekt.GNZTypToStr(Ergebnis.zaehler);
+  If Ergebnis.Negativ then Vorzeichen:='-' else Vorzeichen:='';
+  Edit6.Text := Vorzeichen + GnurzObjekt.GNZTypToStr(Ergebnis.zaehler);
   Edit9.Text := GnurzObjekt.GNZTypToStr(Ergebnis.nenner);
 end;
+
+
 
 procedure TForm1.Button2Click(Sender: TObject);
 var Ergebnis: GNZTyp;
@@ -224,7 +253,7 @@ end;
 procedure TForm1.Button8Click(Sender: TObject);
 var Ergebnis: GNZTyp;
 begin
-  Ergebnis := GnurzObjekt.GNZkgv(a,b);
+  Ergebnis   := GnurzObjekt.GNZkgv(a,b);
 
   Edit3.Text := GnurzObjekt.GNZTypToStr(Ergebnis);
 end;
@@ -232,16 +261,39 @@ end;
 procedure TForm1.Button9Click(Sender: TObject);
 begin
   c.zaehler  := GnurzObjekt.StrToGNZTyp(Edit4.Text);
-  c.nenner := GnurzObjekt.StrToGNZTyp(Edit7.Text);
+  c.nenner   := GnurzObjekt.StrToGNZTyp(Edit7.Text);
+  c.Negativ  := Checkbox1.Checked;
   d.zaehler  := GnurzObjekt.StrToGNZTyp(Edit5.Text);
   d.nenner := GnurzObjekt.StrToGNZTyp(Edit8.Text);
+  d.Negativ  := Checkbox2.Checked;
 
+  Edit6.Text:=''; Edit9.Text:='';
   Button10.Enabled:=true;
   Button11.Enabled:=true;
   Button12.Enabled:=true;
   Button13.Enabled:=true;
   Button14.Enabled:=true;
   Button15.Enabled:=true;
+end;
+
+procedure TForm1.CheckBox1Change(Sender: TObject);
+begin
+  Button10.Enabled:=false;
+  Button11.Enabled:=false;
+  Button12.Enabled:=false;
+  Button13.Enabled:=false;
+  Button14.Enabled:=false;
+  Button15.Enabled:=false;
+end;
+
+procedure TForm1.CheckBox2Change(Sender: TObject);
+begin
+  Button10.Enabled:=false;
+  Button11.Enabled:=false;
+  Button12.Enabled:=false;
+  Button13.Enabled:=false;
+  Button14.Enabled:=false;
+  Button15.Enabled:=false;
 end;
 
 procedure TForm1.Edit1Change(Sender: TObject);
@@ -255,6 +307,11 @@ begin
   Button8.Enabled:=false;
 end;
 
+procedure TForm1.Edit1KeyPress(Sender: TObject; var Key: char);
+begin
+  If not((ord(Key)>=48)and(ord(Key)<=57)) then Key:=chr(0);
+end;
+
 procedure TForm1.Edit2Change(Sender: TObject);
 begin
   Button2.Enabled:=false;
@@ -264,6 +321,11 @@ begin
   Button6.Enabled:=false;
   Button7.Enabled:=false;
   Button8.Enabled:=false;
+end;
+
+procedure TForm1.Edit2KeyPress(Sender: TObject; var Key: char);
+begin
+  If not((ord(Key)>=48)and(ord(Key)<=57)) then Key:=chr(0);
 end;
 
 procedure TForm1.Edit4Change(Sender: TObject);
@@ -276,6 +338,11 @@ begin
   Button15.Enabled:=false;
 end;
 
+procedure TForm1.Edit4KeyPress(Sender: TObject; var Key: char);
+begin
+  If not((ord(Key)>=48)and(ord(Key)<=57)) then Key:=chr(0);
+end;
+
 procedure TForm1.Edit5Change(Sender: TObject);
 begin
   Button10.Enabled:=false;
@@ -284,6 +351,11 @@ begin
   Button13.Enabled:=false;
   Button14.Enabled:=false;
   Button15.Enabled:=false;
+end;
+
+procedure TForm1.Edit5KeyPress(Sender: TObject; var Key: char);
+begin
+  If not((ord(Key)>=48)and(ord(Key)<=57)) then Key:=chr(0);
 end;
 
 procedure TForm1.Edit7Change(Sender: TObject);
@@ -296,6 +368,11 @@ begin
   Button15.Enabled:=false;
 end;
 
+procedure TForm1.Edit7KeyPress(Sender: TObject; var Key: char);
+begin
+  If not((ord(Key)>=48)and(ord(Key)<=57)) then Key:=chr(0);
+end;
+
 procedure TForm1.Edit8Change(Sender: TObject);
 begin
   Button10.Enabled:=false;
@@ -304,6 +381,16 @@ begin
   Button13.Enabled:=false;
   Button14.Enabled:=false;
   Button15.Enabled:=false;
+end;
+
+procedure TForm1.Edit8KeyPress(Sender: TObject; var Key: char);
+begin
+  If not((ord(Key)>=48)and(ord(Key)<=57)) then Key:=chr(0);
+end;
+
+procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  GnurzObjekt.Free;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);

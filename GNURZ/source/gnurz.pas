@@ -1,11 +1,10 @@
 
 // GNURZ - Arithmetik-Unit fuer (G)rosse (N)atuerliche (U)nd (R)ationale (Z)ahlen
-// Version: ASM 0.5 - beta
+// Version: 1.0.1
 
-// (c) 2008 by Alexander Staidl
-// Kontakt: a.staidl(at)freenet.de
+// (c) 2008-2009 by Alexander Staidl
+// Kontakt: a.staidl(at)SPAMFILTERfreenet.de
 // (bitte SPAMFILTER entfernen)
-// The *Intern-Functions are (c) by Michael Schnell
 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -23,25 +22,20 @@
 
 unit gnurz;
 
-
-{$mode objfpc}{$H+}
+{$mode delphi}{$H+}
 {$inline on}
 
 interface
 type
-  GNZGrundTyp = dword;
-  GNZTyp = array of GNZGrundtyp;                      // Grosse-Natuerliche-Zahlen-Typ; qword: 0..18466744073709551615
-  GGZTyp = record
-    NatZ: GNZTyp;
-    positiv: boolean;
-  end;
+  GNZTyp = array of dword;                      // Grosse-Natuerliche-Zahlen-Typ; qword: 0..18466744073709551615
   GRaZTyp = record                              // Fuer Brueche... ...sollte klar sein.
     nenner, zaehler: GNZTyp;
+    Negativ:boolean;                            // Negativ=true, falls die Zahl kleiner 0 ist.
   end;
 
   TGnurz = class
     private
-      GNZ_GlobZahlenbasis:qword; //Die dem GNZTyp zugrundeliegende Zahlenbasis (Binaersystem=2, Dezimal=10, Hexadezimal=16, u.s.w.); Wird im constructor create festgelegt.
+      GNZ_GlobZahlenbasis:dword; //Die dem GNZTyp zugrundeliegende Zahlenbasis (Binaersystem=2, Dezimal=10, Hexadezimal=16, u.s.w.); Wird im constructor create festgelegt.
       GNZ_Karazubagrenze:dword;
       Errormodus:word;
 
@@ -55,7 +49,8 @@ type
       function GetKarazubagrenze:dword;
       procedure SetKazarzbagrenze(Grenze:dword);     //Setzt die Karazuba-Grenze neu.
       function GetGlobZahlenbasis:dword;
-      function StrToGNZTyp(s:string):GNZTyp;   //Wandelt eine natuerliche Zahl in string-Forum um in den Typ GNZTyp von Basis 10. Eingabe darf nur Zahlen enthalten.
+      procedure SetGlobZahlenbasis(basis:dword);
+      function StrToGNZTyp(Eingabe:string):GNZTyp;   //Wandelt eine natuerliche Zahl in string-Forum um in den Typ GNZTyp von Basis 10. Eingabe darf nur Zahlen enthalten.
       function GNZTypToStr(Eingabe:GNZTyp):string;   //"Umkehrfunktion" zu StrToGNZTypDez;
       function WordToGNZTyp(WZahl:dword):GNZTyp;
       function GNZTypToWord(ZahlGNZ:GNZTyp):dword;
@@ -64,7 +59,6 @@ type
       //Operationen: Natuerliche Zahlen
       function GNZadd(a,b:GNZTyp):GNZTyp; //Gibt die Summe a + b zurueck. Rechnet mit Grossen Natuerlichen Zahlen (GNZ); Zbasis=Zahlenbasis (Dezimalsystem:Zbasis=10)
       function GNZsub(Minuent,Subtrahend:GNZTyp):GNZTyp; // WICHTIG: Es muss Minuend>Subtrahend sein!; Rechnet Minuend-Subtrahend.
-      function GNZmul2(a,b:GNZTyp):GNZTyp;
       function GNZmul(a,b:GNZTyp):GNZTyp;  //Gibt das Produkt a*b zurueck. Rechnet mit grossen natuerlichen Zahlen.
       function GNZmulword(a:dword;b:GNZTyp):GNZTyp; // Wie GNZmul, nur ist a vom Typ dword
       function GNZakleinerb(a,b:GNZTyp):boolean; inline; // Prueft, ob a kleiner ist als b
@@ -81,37 +75,19 @@ type
       function GNZMillerRabin(zahl:GNZTyp; it:word):boolean; //Miller-Rabin Primzahltext. Wenn Zahl Test besteht: Mit Wahrscheinlichkeit (1/4)^it Primzahl.
       function GNZMRPrimdanach(zahl:GNZTyp; it:word):GNZTyp;  //Bestimmt die nach zahl nächste Primzahl.
       function GNZZufall(Obergrenze:GNZTyp):GNZTyp;  // Gibt eine Zufallszahl wieder, die kleiner ist als Obergrenze.
-
-      //Operationen: Ganze Zahlen (d.h. vorzeichenbehaftete natürliche Zahlen)
-      function GNZtoGGZ(NatZ:GNZTyp;Vorzeichen_positiv:boolean): GGZTyp;  //Wandelt eine GNZ-Zahl in eine GGZ.
-      function GGZtoGNZ(Zahl:GGZTyp):GNZTyp;  //schneidet das Vorzeichen ab und gibt eine GNZ zurück.
-      function GGZadd(a,b:GGZTyp):GGZTyp; //Gibt die Summe a + b zurueck. Rechnet mit Grossen Natuerlichen Zahlen (GNZ); Zbasis=Zahlenbasis (Dezimalsystem:Zbasis=10)
-      function GGZsub(Minuent,Subtrahend:GGZTyp):GGZTyp; // WICHTIG: Es muss Minuend>Subtrahend sein!; Rechnet Minuend-Subtrahend.
-      function GGZmul(a,b:GGZTyp):GGZTyp;  //Gibt das Produkt a*b zurueck. Rechnet mit grossen natuerlichen Zahlen.
-      function GGZmulword(a:dword;b:GGZTyp):GGZTyp; // Wie GNZmul, nur ist a vom Typ dword
-      function GGZakleinerb(a,b:GGZTyp):boolean; inline; // Prueft, ob a kleiner ist als b
-      function GGZagleichb(a,b:GGZTyp):boolean; inline; // Prueft, ob sich a und b gleichen.
-      function GGZdiv(Divident, Divisor:GGZTyp):GGZTyp;  //dividiert Divident durch Divisor und gibt das Ergebnis zurueck
-      function GGZmod(Divident, Divisor:GGZTyp):GGZTyp; //Gibt Divident mod Divisor zurueck
-      //function GNZggt(a,b:GNZTyp):GNZTyp; inline;  //Wie ggt, nur fuer grosse natuerliche Zahlen (GNZ)
-      //function GNZkgv(a,b:GNZTyp):GNZTyp; inline;  //Wie kgv, nur fuer GNZ
-      function GGZistgerade(zahl:GGZTyp):boolean; inline; //Prueft, ob zahl mod 2 = 0
-      //function GNZPotenz(Basis,Exponent:GNZTyp):GNZTyp; //Gibt Zahl^Exponent zurueck. Nach einem im Internet gefundenen Algorithmus
-      //function GNZPotenzMod(Basis,Exponent,Modulo:GNZTyp):GNZTyp; //Rechnet Basis^Exponent mod Modulus.
-      //function GNZFakultaet(nFak:dword):GNZTyp;  // Gibt n! zurueck
-      //function GNZIstPrim(zahl:GNZTyp):boolean; //Wahr, wenn zahl Primzahl
-      //function GNZMillerRabin(zahl:GNZTyp; it:word):boolean; //Miller-Rabin Primzahltext. Wenn Zahl Test besteht: Mit Wahrscheinlichkeit (1/4)^it Primzahl.
-      //function GNZMRPrimdanach(zahl:GNZTyp; it:word):GNZTyp;  //Bestimmt die nach zahl nächste Primzahl.
-      //function GNZZufall(Obergrenze:GNZTyp):GNZTyp;  // Gibt eine Zufallszahl wieder, die kleiner ist als Obergrenze.
-
+      function GNZeins:GNZTyp;                       // Gibt 1 zurueck
+      function GNZnull:GNZTyp;                       // Gibt 0 zurueck
+      
       //Operationen: Rationale Zahlen
       function GRaZKuerzen(Bruch:GRaZTyp):GRaZTyp;  //Kuerzt den Bruch
       function GRaZadd(a,b:GRazTyp):GRaZTyp;  //Rechnet a+b und kuerzt die Summe anschliessend
       function GRazsub(Minuent,Subtrahend:GRaZTyp):GRaZTyp;   //Es muss a>b sein!
       function GRaZmul(a,b:GRaZTyp):GRaZTyp;                 //Multipliziert die Brueche miteinander
       function GRaZdiv(Divident,Divisor:GRaZTyp):GRaZTyp;  //Dividiert durch Multiplikation mit dem Kehrwert
-      function GRaZakleinerb(a,b:GRaZTyp):boolean;      //Gibt true zurueck, wenn a kleiner b
-      function GRaZagleichb(a,b:GRaZTyp):boolean;       //Gibt true zurueck, wenn a gleich b
+      function GRaZakleinerbBetrag(a,b:GRaZTyp):boolean;//Gibt true zurueck, wenn |a| < |b|
+      function GRaZakleinerb(a,b:GRaZTyp):boolean;      //Gibt true zurueck, wenn a < b
+      function GRaZagleichbBetrag(a,b:GRaZTyp):boolean; //Gibt true zurueck, wenn |a| = |b|
+      function GRaZagleichb(a,b:GRaZTyp):boolean;       //Gibt true zurueck, wenn a = b
   end;
 
 
@@ -130,11 +106,10 @@ begin
   for n:=length(Zahl)-1 downto 0 do
   begin
     ZwSpGNZ[0]:=Zahl[n];
-    //showmessage(GNZTypToStr(GNZmul(Erg,BasisDez))+'  '+GNZTypToStr(Erg));
     Erg:=GNZadd(GNZmul(Erg,BasisDez),ZwSpGNZ);
   end;
   Result:=Erg;
-end; // GNZQuellBToGlobB
+end; // GNZBasisDezToGlobB
 
 
 function TGnurz.GNZGlobBToBasisDez(Zahl:GNZTyp):GNZTyp;
@@ -160,11 +135,7 @@ constructor TGnurz.create;
 begin
   inherited;
   Randomize;
-  {$IFDEF CPU86}
-  GNZ_GlobZahlenbasis:=4294967296;
-  {$ELSE}
   GNZ_GlobZahlenbasis:=2147483648;
-  {$ENDIF}
   GNZ_Karazubagrenze:= 44;
   Errormodus:=0;                       //1=Minuent<Subtrachend; 2=Konvertierungsfehler; 3=Eingabe keine Zahl; 4=Division durch 0
 end;
@@ -193,58 +164,13 @@ function TGnurz.GetGlobZahlenbasis:dword;
 begin Result:=GNZ_GlobZahlenbasis end;
 
 
-function TGnurz.StrToGNZTyp(s: string): GNZTyp;
-var
-  l: integer;
-  i,i2: integer;
-  c: GNZGrundTyp;
-
-  function StrDiv2(var s: string): GNZGrundTyp;
-  var
-    i: integer;
-    ch: byte;
-  begin
-    result:= 0;
-    for i := 1 to length(s) do begin
-      ch:= byte(s[i]);
-      ch:= ch - $30;
-      ch:= ch + (result * 10);
-      result:= ch and 1;
-      ch:= ch shr 1;
-      s[i]:= char(ch + $30);
-    end;
-    if s[1] = '0' then begin
-      s:= copy(s, 2, high(integer));
-    end;
-    result:= result shl (GNZ_GlobZahlenbasis -1);
-  end;
-
+procedure TGnurz.SetGlobZahlenbasis(basis:dword);
 begin
-  i2:= 0 ;
-  l:= length(s);
-  l:= ((l + 2) div 3) * 10; //just in case
-  l:= (l + (GNZ_GlobZahlenbasis -1)) div (GNZ_GlobZahlenbasis); //just in case
-  setlength(result, l);
-  for I := low(result) to high(result) do begin
-    result[i]:= 0;
-  end;
-  i:= 0;
-  while s <> '' do begin
-    c:= StrDiv2(s);
-    i2:= i div (GNZ_GlobZahlenbasis);
-    result[i2]:= (result[i2] shr 1) or c;
-    inc(i);
-  end;
-  i:= i mod GNZ_GlobZahlenbasis;
-  if i > 0 then begin
-    result[i2]:= result[i2] shr ((GNZ_GlobZahlenbasis) - (i mod GNZ_GlobZahlenbasis));
-  end;
-  while result[high(result)] = 0  do begin
-    l:= length(result);
-    SetLength(Result, l-1);
-  end;
+  If (basis>1)and(basis<=2147483648) then GNZ_GlobZahlenbasis:=basis;
 end;
-{function TGnurz.StrToGNZTyp(Eingabe:string):GNZTyp;
+
+
+function TGnurz.StrToGNZTyp(Eingabe:string):GNZTyp;
 var n, Ordnr, laenge:dword;
     Erg:GNZTyp;
 begin
@@ -259,7 +185,7 @@ begin
   begin
     setlength(Result,1); Result[0]:=1;
   end;
-end;  //StrToGNZTypDez}
+end;  //StrToGNZTypDez
 
 
 function TGnurz.GNZTypToStr(Eingabe:GNZTyp):string;
@@ -310,104 +236,11 @@ end;
 
 // GNZ-Operationen (Rechnen mit Grosse Natuerlichen Zahlen)-------------------------------------------------------
 
-{$define asm}
-{$asmmode intel}
-
-function GNZAddIntern(var s, s1, s2: GNZGrundTyp; length: Integer): GNZGrundTyp; assembler;
-asm
-  push ebx           // s, s1 and s2 already are eax, edx and ecx
-  push esi
-  push edi
-  mov  ebx, length
-  mov  edi, ebx
-  shr  ebx, 2
-  and  edi, 3         // clear carry       (
-  jz   @loop
-  inc  ebx
-  dec  edi
-  jz   @l1
-  dec  edi
-  jz   @l2
-  jmp  @l3
-@loop:
-  mov esi, [edx]
-  lea edx, [edx+4]   //edx = edx + 4 without affecting carry
-  adc esi, [ecx]
-  lea ecx, [ecx+4]   //ecx = ecx + 4 without affecting carry
-  mov [eax], esi
-  lea eax, [eax+4]   //eax = eax + 4 without affecting carry
-@l3:
-  mov esi, [edx]
-  lea edx, [edx+4]   //edx = edx + 4 without affecting carry
-  adc esi, [ecx]
-  lea ecx, [ecx+4]   //ecx = ecx + 4 without affecting carry
-  mov [eax], esi
-  lea eax, [eax+4]   //eax = eax + 4 without affecting carry
-@l2:
-  mov esi, [edx]
-  lea edx, [edx+4]   //edx = edx + 4 without affecting carry
-  adc esi, [ecx]
-  lea ecx, [ecx+4]   //ecx = ecx + 4 without affecting carry
-  mov [eax], esi
-  lea eax, [eax+4]   //eax = eax + 4 without affecting carry
-@l1:
-  mov esi, [edx]
-  lea edx, [edx+4]   //edx = edx + 4 without affecting carry
-  adc esi, [ecx]
-  lea ecx, [ecx+4]   //ecx = ecx + 4 without affecting carry
-  mov [eax], esi
-  lea eax, [eax+4]   //eax = eax + 4 without affecting carry
-  dec ebx
-  jnz @loop
-  mov eax, 0
-  adc eax, eax       // carry from highest word
-  pop edi
-  pop esi
-  pop ebx
-end;
-
-{$IFDEF CPU86}
-
-function TGnurz.GNZadd(a,b:GNZTyp):GNZTyp;
-var n,aAnz,bAnz: dword;
-    Erg: GNZTyp;
-begin
-  aAnz:=length(a); bAnz:=length(b);
-  If aAnz=bAnz then
-  begin
-    setlength(Erg,aAnz+1);
-    Erg[aAnz]:=0;
-    Erg[aAnz]:=GNZAddIntern(Erg[0], a[0], b[0], aAnz);
-    If Erg[aAnz]=0 then setlength(Erg,aAnz);
-  end else
-  if aAnz<bAnz then
-  begin
-    setlength(Erg,bAnz+1);
-    Erg[bAnz]:=0;
-    setlength(a,bAnz);
-    for n:=aAnz to bAnz-1 do a[n]:=0;
-    Erg[bAnz]:=GNZAddIntern(Erg[0], a[0], b[0], bAnz);
-    if Erg[bAnz]=0 then setlength(Erg,bAnz);
-  end else  //if aAnz<bAnz
-  begin
-    setlength(Erg,aAnz+1);
-    Erg[aAnz]:=0;
-    setlength(b,aAnz);
-    for n:=bAnz to aAnz-1 do b[n]:=0;
-    Erg[aAnz]:=GNZAddIntern(Erg[0], a[0], b[0], aAnz);
-    if Erg[aAnz]=0 then setlength(Erg,aAnz);
-  end; //if aAnz<bAnz else
-  Result:=Erg;
-end; // GNZadd    
-
-{$ELSE}
-
 function TGnurz.GNZadd(a,b:GNZTyp):GNZTyp;
 var ZwSp: dword;
     n,aAnz,bAnz: dword;
     Erg: GNZTyp;
 begin
-
   aAnz:=length(a); bAnz:=length(b);
   ZwSp:=0;
   If aAnz<bAnz then
@@ -483,77 +316,6 @@ begin
 end; // GNZadd
 
 
-{$ENDIF}
-
-{$IFDEF CPU86}
-
-function GNZSubIntern(var s, s1, s2: GNZGrundtyp; length: Integer): GNZGrundTyp; assembler;
-asm
-  push ebx           // s, s1 and s2 already are eax, edx and ecx
-  push esi
-  push edi
-  mov  ebx, length
-  mov  edi, ebx
-  shr  ebx, 2
-  and  edi, 3         // clear carry       (finally edi=0).
-  jz   @loop
-  inc  ebx
-  dec  edi
-  jz   @l1
-  dec  edi
-  jz   @l2
-  dec  edi
-  jz   @l3
-@loop:
-  mov esi, [edx+edi]
-  sbb esi, [ecx+edi]
-  mov [eax+edi], esi
-  lea edi, [edi+4]   //ebp = ebp + 4 without affecting carry
-@l3:
-  mov esi, [edx+edi]
-  sbb esi, [ecx+edi]
-  mov [eax+edi], esi
-  lea edi, [edi+4]   //ebp = ebp + 4 without affecting carry
-@l2:
-  mov esi, [edx+edi]
-  sbb esi, [ecx+edi]
-  mov [eax+edi], esi
-  lea edi, [edi+4]   //ebp = ebp + 4 without affecting carry
-@l1:
-  mov esi, [edx+edi]
-  sbb esi, [ecx+edi]
-  mov [eax+edi], esi
-  lea edi, [edi+4]   //ebp = ebp + 4 without affecting carry
-  dec ebx
-  jnz @loop
-  mov eax, 0
-  sbb eax, eax       // carry from highest word
-  pop edi
-  pop esi
-  pop ebx
-end;
-
-function TGnurz.GNZsub(Minuent,Subtrahend:GNZTyp):GNZTyp;
-var ZwSp: dword;
-    n,mAnz,sAnz: dword;
-    Erg: GNZTyp;
-begin
-  mAnz:=length(Minuent); sAnz:=length(Subtrahend);
-  setlength(Erg,mAnz);
-  setlength(Subtrahend,mAnz);
-  for n:=sAnz to mAnz-1 do Subtrahend[n]:=0;
-  n:=GNZSubIntern(Erg[0],Minuent[0],Subtrahend[0],mAnz);
-  If n<>0 then Errormodus:=1 else
-  repeat
-    dec(mAnz);
-  until (mAnz=0)or(Erg[mAnz]<>0);
-  setlength(Erg,mAnz+1);
-
-  Result:=Erg;
-end; //GNZsub
-
-{$else}
-
 function TGnurz.GNZsub(Minuent,Subtrahend:GNZTyp):GNZTyp;
 var ZwSp: dword;
     n,minn,maxn: dword;
@@ -607,344 +369,8 @@ begin
   Result:=Erg;
 end; //GNZsub
 
-{$ENDIF}
-
-
-//{$ifdef CPU86}
-
-procedure GNZMulIntern(var p, p1: GNZGrundTyp; p2: GNZGrundTyp; length: dword); assembler;
-var
-  ptemp, p1temp: Pointer;
-  p2temp: Cardinal;
-
-asm                   // p, p1 and p2 are eax, edx and ecx.
-  push ebx
-  push esi
-  push edi
-  mov  ptemp, eax     // p  -> ptemp.
-  mov  p1temp, edx    // p1 -> p1temp.
-  mov  p2temp, ecx    // p2 -> p2temp.
-  mov  ebx, length
-  xor  edi, edi       // edi = 0 .
-  xor  esi, esi       // carry esi = 0.
-
-@loop:
-  mov  ecx, p1temp
-  mov  eax, [ecx+edi] // p1.
-  mul  [p2temp]       // EAX *  [p2temp] -> EDX:EAX.
-                      //                     EDX <= $FFFFFFFE.
-  mov  ecx, ptemp
-  add  eax, [ecx+edi] // p = p + low(p1*p2).
-
-                      // This digit          | next digit                    | second next digit.
-  adc  edx, 0         //                     | high(p1*p2) + new carry bit   | Carry not possible.
-  add  eax, esi       // + old carry word.   | Carry bit possible
-  mov  ecx, ptemp
-  mov  [ecx+edi], eax // -> p.
-  mov  esi, edx       //                     | next carry word.
-  adc  esi, 0         //                     | + carry                       | Carry not possble
-  lea  edi, [edi+4]   //ebp = ebp + 4 without affecting carry.
-  dec  ebx
-  jnz  @loop
-  mov  ecx, ptemp
-//  add  esi, [ecx+edi] // digit n+1 is still = 0 !!! .
-  mov  [ecx+edi], esi
-
-
-  pop  edi
-  pop  esi
-  pop  ebx
-end;  //GNZmulIntern
-
 
 function TGnurz.GNZmul(a,b:GNZTyp):GNZTyp;
-
-    function GNZKarazuba(a,b:GNZTyp;aAnz,bAnz,Laenge:dword):GNZTyp; //Implementierung des Karazuba-Algorithmus. Laenge=2^n
-    var p,q,r,s,u,v,vFaktor1,vFaktor2,w,ZwSpGNZ,Erg :GNZTyp;
-        n,n2,pAnz,qAnz,rAnz,sAnz,vFaktor1Anz,vFaktor2Anz,Laengediv2,uAnz,ZwSpAnz :dword;
-        ZwSp :qword;
-        vPositiv :boolean;
-    begin
-      If Laenge<>1 then
-      begin
-        Laengediv2:=Laenge div 2;
-        //Geschwindigkeitsoptimiert: (dafuer Aufwendig in der Wartung und fehleranfaellig)
-        If aAnz>Laengediv2 then
-        begin
-          //Erhalten von p,q:
-          pAnz:=aAnz-Laengediv2;
-          setlength(p,pAnz);
-          n2:=Laengediv2-1;
-          while (a[n2]=0)and(n2<>0) do dec(n2);
-          qAnz:=n2+1;
-          setlength(q,qAnz);
-          for n:=0 to n2 do q[n]:=a[n];
-          for n:=Laengediv2 to aAnz-1 do p[n-Laengediv2]:=a[n];
-          If bAnz>Laengediv2 then
-          begin
-            //Erhalten von r,s:
-            rAnz:=bAnz-Laengediv2;
-            setlength(r,rAnz);
-            n2:=Laengediv2-1;
-            while (b[n2]=0)and(n2<>0) do dec(n2);
-            sAnz:=n2+1;
-            setlength(s,sAnz);
-            for n:=0 to n2 do s[n]:=b[n];
-            for n:=Laengediv2 to bAnz-1 do r[n-Laengediv2]:=b[n];
-            //Karazuba:                                                         <-1
-            u:=GNZmul(p,r);
-            if GNZakleinerb(q,p)=true then
-            begin
-              vPositiv:=false;
-              vFaktor1:=GNZSub(p,q);
-            end else
-            begin
-              vPositiv:=true;
-              vFaktor1:=GNZSub(q,p);
-            end;
-            if GNZakleinerb(s,r) then
-            begin
-              vPositiv:= not vPositiv;
-              vFaktor2:=GNZsub(r,s);
-            end else vFaktor2:=GNZsub(s,r);
-            vFaktor1Anz := length(vFaktor1);
-            vFaktor2Anz := length(vFaktor2);
-            v := GNZmul(vFaktor1,vFaktor2);
-            w := GNZmul(q,s);
-            If vPositiv=true then ZwSpGNZ:=GNZsub(GNZadd(u,w),v) else ZwSpGNZ:=GNZadd(GNZadd(u,w),v);
-            //Nun wird u mit GlobZahlensystem^(2*Laengediv2), ZwSpGNZ mit GlobZahlensystem^Laengediv2 per Shift multipliziert;
-            uAnz:=length(u);
-            setlength(u,uAnz+Laenge);
-            for n:=uAnz-1 downto 0 do u[n+Laenge]:=u[n];
-            for n:=0 to Laenge-1 do u[n]:=0;
-            ZwSpAnz:=length(ZwSpGNZ);
-            setlength(ZwSpGNZ,ZwSpAnz+Laengediv2);
-            for n:=ZwSpAnz-1 downto 0 do ZwSpGNZ[n+Laengediv2]:=ZwSpGNZ[n];
-            for n:=0 to Laengediv2-1 do ZwSpGNZ[n]:=0;
-            //Ergebnis der Multiplikation:
-            Erg:=GNZadd(u,GNZadd(ZwSpGNZ,w));
-          end else
-          begin
-            //r=0,s=b:                                                          <-2
-            //Karazuba:
-            if GNZakleinerb(q,p)=true then
-            begin
-              vPositiv:=false;
-              vFaktor1:=GNZSub(p,q);
-            end else
-            begin
-              vPositiv:=true;
-              vFaktor1:=GNZSub(q,p);
-            end;
-            //vFaktor2:=b; (da s=b und r=0)
-            vFaktor1Anz:=length(vFaktor1);
-            v := GNZmul(vFaktor1,b);
-            w := GNZmul(q,b);
-            If vPositiv=true then ZwSpGNZ:=GNZsub(w,v) else ZwSpGNZ:=GNZadd(w,v);
-            //Nun wird ZwSpGNZ mit GlobZahlensystem^Laengediv2 per Shift multipliziert;
-            ZwSpAnz:=length(ZwSpGNZ);
-            setlength(ZwSpGNZ,ZwSpAnz+Laengediv2);
-            for n:=ZwSpAnz-1 downto 0 do ZwSpGNZ[n+Laengediv2]:=ZwSpGNZ[n];
-            for n:=0 to Laengediv2-1 do ZwSpGNZ[n]:=0;
-            //Ergebnis der Multiplikation:
-            Erg:=GNZadd(ZwSpGNZ,w);
-          end; //if-else bAnz>Laengediv2, im Fall von aAnz>Laengediv2
-        end else
-        begin
-          //p=0,q=a:;
-          If bAnz>Laengediv2 then
-          begin
-            //Erhalten von r,s:
-            setlength(r,bAnz-Laengediv2);
-            n2:=Laengediv2-1;
-            while (b[n2]=0)and(n2<>0) do dec(n2);
-            sAnz:=n2+1;
-            setlength(s,sAnz);
-            for n:=0 to n2 do s[n]:=b[n];
-            //setlength(s,Laengediv2);
-            //for n:=0 to Laengediv2-1 do s[n]:=b[n];
-            for n:=Laengediv2 to bAnz-1 do r[n-Laengediv2]:=b[n];
-            //Karazuba:                                                         <-3
-            vPositiv:=true;
-            if GNZakleinerb(s,r) then
-            begin
-              vPositiv:= not vPositiv;
-              vFaktor2:=GNZsub(r,s);
-            end else vFaktor2:=GNZsub(s,r);
-            vFaktor2Anz:=length(vFaktor2);
-            v := GNZmul(a,vFaktor2);
-            w := GNZmul(a,s);
-            If vPositiv=true then ZwSpGNZ:=GNZsub(w,v) else ZwSpGNZ:=GNZadd(w,v);
-            //Nun wird ZwSpGNZ mit GlobZahlensystem^Laengediv2 per Shift multipliziert;
-            ZwSpAnz:=length(ZwSpGNZ);
-            setlength(ZwSpGNZ,ZwSpAnz+Laengediv2);
-            for n:=ZwSpAnz-1 downto 0 do ZwSpGNZ[n+Laengediv2]:=ZwSpGNZ[n];
-            for n:=0 to Laengediv2-1 do ZwSpGNZ[n]:=0;
-            //Ergebnis der Multiplikation:
-            Erg:=GNZadd(ZwSpGNZ,w);
-          end else
-          begin
-            //r=0,s=b,p=0,q=a
-            //Karazuba:                                                         <-4
-            Erg := GNZmul(a,b);
-          end; //if-else bAnz>Laengediv2, im Fall aAnz<=Laengediv2;
-        end; //if-else aAnz>Laengediv2;
-      end else
-      begin
-        //Schneller Algorithmus zur Multiplikation zweier einstelliger Zahlen:
-        ZwSp:=a[0]*qword(b[0]);
-        If ZwSp<GNZ_GlobZahlenbasis then
-        begin
-          setlength(Erg,1);
-          Erg[0]:=ZwSp;
-        end else
-        begin
-          setlength(Erg,2);
-          Erg[1]:=ZwSp div GNZ_GlobZahlenbasis;
-          Erg[0]:=ZwSp mod GNZ_GlobZahlenbasis;
-        end; //If ZwSp<GNZ_GlobZahlenbasis
-      end; //if Laenge<>1 else
-      Result:=Erg;
-    end; //GNZKarazuba
-
-var n,na,nb,aAnz,bAnz,Ueberschlag,ErgMaxZeiger: dword;
-    ZwSp:qword;
-    Erg,ZwSpGNZ,u,v,vF1,vF2,w: GNZTyp;
-    v_neg,pkleinerq,rkleiners:boolean;
-begin
-  aAnz:=length(a); bAnz:=length(b);
-  If (aAnz<GNZ_Karazubagrenze)or(bAnz<GNZ_Karazubagrenze) then
-  begin
-    setlength(Erg,aAnz+bAnz);
-    for n:=0 to aAnz+bAnz-1 do Erg[n]:=0;
-    for n:=0 to bAnz-1 do GNZMulIntern(Erg[n], a[0], b[n], aAnz);
-    If Erg[aAnz+bAnz-1]=0 then setlength(Erg,aAnz+bAnz-1);
-    //showmessage(GNZTypToStr(Erg)+'='+GNZTypToStr(a)+'*'+GNZTypToStr(b));
-  end else     //if Karazuba
-  begin
-    If aAnz<bAnz then na:=bAnz else na:=aAnz;        //In na steht die Stellenanz. des laengsten.
-    n:=2;
-    while n<na do n:=n*2;
-    Erg:=GNZKarazuba(a,b,aAnz,bAnz,n);
-
-    //Optimierter Karazuba-Ansatz (fehlerhaft):
-    {If aAnz<bAnz then na:=bAnz else na:=aAnz;        //In na steht die Stellenanz. des laengsten.
-    nb:=2;
-    while n<na do nb:=nb*2;
-    setlength(a,nb); setlength(b,nb);
-    for n:=aAnz to nb-1 do a[n]:=0;
-    for n:=bAnz to nb-1 do b[n]:=0;
-
-    //Berechnung von u:
-    na:=nb div 2;
-    setlength(u,nb);
-    for n:=0 to nb-1 do u[n]:=0;
-    for n:=(na) to nb-1 do GNZMulIntern(u[n-na], a[na], b[n], na);
-      //If u[nb-1]=0 then setlength(u,nb-1);
-    //Berechnung von w:
-    setlength(w,nb);
-    for n:=0 to nb-1 do w[n]:=0;
-    for n:=0 to na-1 do GNZMulIntern(w[n], a[0], b[n], na);
-      //If w[nb-1]=0 then setlength(w,nb-1);
-    //Berechnung von v und ZwSpGNZ=u+w-v:
-    setlength(v,nb);
-    setlength(ZwSpGNZ,nb);
-    setlength(vF1,na);
-    setlength(vF2,na);
-    for n:=0 to nb-1 do v[n]:=0;
-    n:=nb;
-    repeat
-      dec(n);
-    until (a[n]<>a[na-n])or(n=na);
-    If a[n]<a[na-n] then pkleinerq:=true else pkleinerq:=false;
-    n:=nb;
-    repeat
-      dec(n);
-    until (b[n]<>b[na-n])or(n=na);
-    If b[n]<b[na-n] then rkleiners:=true else rkleiners:=false;
-
-    If pkleinerq then
-    begin
-      if rkleiners then
-      begin
-        Ueberschlag:=GNZsubintern(vF1[0],a[0],a[na],na);
-        Ueberschlag:=GNZsubintern(vF2[0],b[0],b[na],na);
-        for n:=0 to na-1 do GNZMulIntern(v[n], vF1[0], vF2[0], na);
-        Ueberschlag:=GNZaddIntern(ZwSpGNZ[0],u[0],w[0],nb);
-        If Ueberschlag=1 then
-        begin
-          setlength(ZwSpGNZ,nb+1);
-          ZwSpGNZ[nb]:=1;
-          setlength(v,nb+1);
-          v[nb]:=0;
-        end;
-        Ueberschlag:=GNZsubIntern(ZwSpGNZ[0],ZwSpGNZ[0],v[0],nb);
-      end else
-      begin
-        Ueberschlag:=GNZsubintern(vF1[0],a[0],a[na],na);
-        Ueberschlag:=GNZsubintern(vF2[0],b[na],b[0],na);
-        for n:=0 to na-1 do GNZMulIntern(v[n], vF1[0], vF2[0], na);
-        Ueberschlag:=GNZaddIntern(ZwSpGNZ[0],u[0],w[0],nb);
-        If Ueberschlag=1 then
-        begin
-          setlength(ZwSpGNZ,nb+1);
-          ZwSpGNZ[nb]:=1;
-          setlength(v,nb+1);
-          v[nb]:=0;
-        end;
-        Ueberschlag:=GNZaddIntern(ZwSpGNZ[0],ZwSpGNZ[0],v[0],nb);
-      end;
-    end else
-    begin
-      if rkleiners then
-      begin
-        Ueberschlag:=GNZsubintern(vF1[0],a[na],a[0],na);
-        Ueberschlag:=GNZsubintern(vF2[0],b[0],b[na],na);
-        for n:=0 to na-1 do GNZMulIntern(v[n], vF1[0], vF2[0], na);
-        Ueberschlag:=GNZaddIntern(ZwSpGNZ[0],u[0],w[0],nb);
-        If Ueberschlag=1 then
-        begin
-          setlength(ZwSpGNZ,nb+1);
-          ZwSpGNZ[nb]:=1;
-          setlength(v,nb+1);
-          v[nb]:=0;
-        end;
-        Ueberschlag:=GNZaddIntern(ZwSpGNZ[0],ZwSpGNZ[0],v[0],nb);
-      end else
-      begin
-        Ueberschlag:=GNZsubintern(vF1[0],a[na],a[0],na);
-        Ueberschlag:=GNZsubintern(vF2[0],b[na],b[0],na);
-        for n:=0 to na-1 do GNZMulIntern(v[n], vF1[0], vF2[0], na);
-        Ueberschlag:=GNZaddIntern(ZwSpGNZ[0],u[0],w[0],nb);
-        If Ueberschlag=1 then
-        begin
-          setlength(ZwSpGNZ,nb+1);
-          ZwSpGNZ[nb]:=1;
-          setlength(v,nb+1);
-          v[nb]:=0;
-        end;
-        Ueberschlag:=GNZsubIntern(ZwSpGNZ[0],ZwSpGNZ[0],v[0],nb);
-      end;
-    end;
-    //Ergebnis:
-    setlength(Erg,2*nb);
-    for n:=0 to nb-1 do Erg[n]:=w[n];
-    for n:=nb to 2*nb-1 do Erg[n]:=0;
-    If length(ZwSpGNZ)=nb then Ueberschlag:=GNZaddIntern(Erg[na],Erg[na],ZwSpGNZ[0],nb)
-     else Ueberschlag:=GNZaddIntern(Erg[na],Erg[na],ZwSpGNZ[0],nb+1);
-    Ueberschlag:=GNZaddIntern(Erg[nb],Erg[nb],u[0],nb);
-    n:=2*nb;
-    repeat
-      dec(n);
-    until (n=0)or(Erg[n]<>0);
-    setlength(Erg,n+1);}
-  end;
-  Result:=Erg;
-end; //GNZmul ASM-opt
-
-//{$else}
-
-function TGnurz.GNZmul2(a,b:GNZTyp):GNZTyp;
 
     function GNZmul4Karazuba(a,b:GNZTyp;aAnz,bAnz:dword):GnzTyp;
     var n,na,nb,Ergmaxzeiger,Ueberschlag:dword;
@@ -1271,147 +697,153 @@ begin
     ErgMaxZeiger:=0;                                              //Zeigt auf hoechste Erg-Stelle
     ZwSp:=0;
     If NOT (((aAnz=1)and(a[0]=0))or((bAnz=1)and(b[0]=0))) then
-    for na:=0 to aAnz-1 do
     begin
-      setlength(ZwErg,na+bAnz+1);
-      for nb:=0 to bAnz-1 do
+      for na:=0 to aAnz-1 do
       begin
-        ZwSp:=qword(a[na])*b[nb] + ZwSp;
-        If ZwSp<GNZ_GlobZahlenbasis then
+        setlength(ZwErg,na+bAnz+1);
+        for nb:=0 to bAnz-1 do
         begin
-          ZwErg[na+nb]:=ZwSp;
+          ZwSp:=qword(a[na])*b[nb] + ZwSp;
+          If ZwSp<GNZ_GlobZahlenbasis then
+          begin
+            ZwErg[na+nb]:=ZwSp;
+            ZwSp:=0;
+          end else
+          begin
+            ZwErg[na+nb]:=ZwSp mod GNZ_GlobZahlenbasis;
+            ZwSp:=ZwSp div GNZ_GlobZahlenbasis;
+          end; //if zwsp<Zbasis
+        end; //for bAnz
+        If ZwSp<>0 then
+        begin
+          ZwErg[na+bAnz]:=ZwSp;
           ZwSp:=0;
+          //BEGINN Optimierter Additionsalgorithmus:
+          If na=0 then
+          begin
+            for n:=0 to bAnz do Erg[n]:=ZwErg[n];
+            ErgMaxZeiger:=bAnz;
+          end else
+          begin
+            Ueberschlag:=0;
+            for n := na to ErgMaxZeiger do
+            begin
+              Ueberschlag := Ueberschlag + Erg[n] + ZwErg[n];
+              If Ueberschlag >= GNZ_GlobZahlenbasis then
+              begin
+                Erg[n] := Ueberschlag - GNZ_GlobZahlenbasis;
+                Ueberschlag := 1;
+              end else
+              begin
+                Erg[n] := Ueberschlag;
+                Ueberschlag := 0;
+              end;
+            end; //for n:=na to ErgMaxZeiger do
+            if ErgMaxZeiger<>na+bAnz then
+            begin
+              inc(ErgMaxZeiger);
+              Ueberschlag := Ueberschlag + ZwErg[ErgMaxZeiger];
+              If Ueberschlag >= GNZ_GlobZahlenbasis then
+              begin
+                Erg[ErgMaxZeiger] := Ueberschlag - GNZ_GlobZahlenbasis;
+                Ueberschlag := 1;
+              end else
+              begin
+                Erg[ErgMaxZeiger] := Ueberschlag;
+                Ueberschlag := 0;
+              end;
+            end; // if ErgMaxZeiger<>na+bAnz
+            if ErgMaxZeiger<>na+bAnz then                                //koennte auch in einer while-Schleife
+            begin                                                        //geloest werden, die sich dann max.
+              inc(ErgMaxZeiger);                                         //2x aufruft-->Langsam
+              Ueberschlag := Ueberschlag + ZwErg[ErgMaxZeiger];
+              If Ueberschlag >= GNZ_GlobZahlenbasis then
+              begin
+                Erg[ErgMaxZeiger] := Ueberschlag - GNZ_GlobZahlenbasis;
+                Ueberschlag := 1;
+              end else
+              begin
+                Erg[ErgMaxZeiger] := Ueberschlag;
+                Ueberschlag := 0;
+              end;
+            end; // if ErgMaxZeiger<>na+bAnz
+            If Ueberschlag=1 then
+            begin
+              inc(ErgMaxZeiger);
+              Erg[ErgMaxZeiger]:=1;
+            end;
+          end; //if na=0 else
+          //ENDE Optimierter Additionsalgorithmus
         end else
         begin
-          ZwErg[na+nb]:=ZwSp mod GNZ_GlobZahlenbasis;
-          ZwSp:=ZwSp div GNZ_GlobZahlenbasis;
-        end; //if zwsp<Zbasis
-      end; //for bAnz
-      If ZwSp<>0 then
-      begin
-        ZwErg[na+bAnz]:=ZwSp;
-        ZwSp:=0;
-        //BEGINN Optimierter Additionsalgorithmus:
-        If na=0 then
-        begin
-          for n:=0 to bAnz do Erg[n]:=ZwErg[n];
-          ErgMaxZeiger:=bAnz;
-        end else
-        begin
-          Ueberschlag:=0;
-          for n := na to ErgMaxZeiger do
+          //setlength(ZwErg,na+bAnz);
+          //BEGINN Optimierter Additionsalgorithmus:
+          If na=0 then
           begin
-            Ueberschlag := Ueberschlag + Erg[n] + ZwErg[n];
-            If Ueberschlag >= GNZ_GlobZahlenbasis then
-            begin
-              Erg[n] := Ueberschlag - GNZ_GlobZahlenbasis;
-              Ueberschlag := 1;
-            end else
-            begin
-              Erg[n] := Ueberschlag;
-              Ueberschlag := 0;
-            end;
-          end; //for n:=na to ErgMaxZeiger do
-          if ErgMaxZeiger<>na+bAnz then
+            for n:=0 to bAnz-1 do Erg[n]:=ZwErg[n];
+            ErgMaxZeiger:=bAnz-1;
+          end else
           begin
-            inc(ErgMaxZeiger);
-            Ueberschlag := Ueberschlag + ZwErg[ErgMaxZeiger];
-            If Ueberschlag >= GNZ_GlobZahlenbasis then
+            Ueberschlag:=0;
+            If ErgMaxZeiger <> 0 then
+            for n := na to ErgMaxZeiger do
             begin
-              Erg[ErgMaxZeiger] := Ueberschlag - GNZ_GlobZahlenbasis;
-              Ueberschlag := 1;
-            end else
+              Ueberschlag := Ueberschlag + Erg[n] + ZwErg[n];
+              If Ueberschlag >= GNZ_GlobZahlenbasis then
+              begin
+                Erg[n] := Ueberschlag - GNZ_GlobZahlenbasis;
+                Ueberschlag := 1;
+              end else
+              begin
+                Erg[n] := Ueberschlag;
+                Ueberschlag := 0;
+              end;
+            end; //for n:=na to ErgMaxZeiger do
+            if ErgMaxZeiger<>na+bAnz then
             begin
-              Erg[ErgMaxZeiger] := Ueberschlag;
-              Ueberschlag := 0;
+              inc(ErgMaxZeiger);
+              Ueberschlag := Ueberschlag + ZwErg[ErgMaxZeiger];
+              If Ueberschlag >= GNZ_GlobZahlenbasis then
+              begin
+                Erg[ErgMaxZeiger] := Ueberschlag - GNZ_GlobZahlenbasis;
+                Ueberschlag := 1;
+              end else
+              begin
+                Erg[ErgMaxZeiger] := Ueberschlag;
+                Ueberschlag := 0;
+              end;
+            end; // if ErgMaxZeiger<>na+bAnz
+            if ErgMaxZeiger<>na+bAnz then                                //koennte auch in einer while-Schleife
+            begin                                                        //geloest werden, die sich dann max.
+              inc(ErgMaxZeiger);                                         //2x aufruft-->Langsam
+              Ueberschlag := Ueberschlag + ZwErg[ErgMaxZeiger];
+              If Ueberschlag >= GNZ_GlobZahlenbasis then
+              begin
+                Erg[ErgMaxZeiger] := Ueberschlag - GNZ_GlobZahlenbasis;
+                Ueberschlag := 1;
+              end else
+              begin
+                Erg[ErgMaxZeiger] := Ueberschlag;
+                Ueberschlag := 0;
+              end;
+            end; // if ErgMaxZeiger<>na+bAnz
+            If Ueberschlag=1 then
+            begin
+              inc(ErgMaxZeiger);
+              Erg[ErgMaxZeiger]:=1;
             end;
-          end; // if ErgMaxZeiger<>na+bAnz
-          if ErgMaxZeiger<>na+bAnz then                                //koennte auch in einer while-Schleife
-          begin                                                        //geloest werden, die sich dann max.
-            inc(ErgMaxZeiger);                                         //2x aufruft-->Langsam
-            Ueberschlag := Ueberschlag + ZwErg[ErgMaxZeiger];
-            If Ueberschlag >= GNZ_GlobZahlenbasis then
-            begin
-              Erg[ErgMaxZeiger] := Ueberschlag - GNZ_GlobZahlenbasis;
-              Ueberschlag := 1;
-            end else
-            begin
-              Erg[ErgMaxZeiger] := Ueberschlag;
-              Ueberschlag := 0;
-            end;
-          end; // if ErgMaxZeiger<>na+bAnz
-          If Ueberschlag=1 then
-          begin
-            inc(ErgMaxZeiger);
-            Erg[ErgMaxZeiger]:=1;
-          end;
-        end; //if na=0 else
-        //ENDE Optimierter Additionsalgorithmus
-      end else
-      begin
-        //setlength(ZwErg,na+bAnz);
-        //BEGINN Optimierter Additionsalgorithmus:
-        If na=0 then
-        begin
-          for n:=0 to bAnz-1 do Erg[n]:=ZwErg[n];
-          ErgMaxZeiger:=bAnz-1;
-        end else
-        begin
-          Ueberschlag:=0;
-          If ErgMaxZeiger <> 0 then
-          for n := na to ErgMaxZeiger do
-          begin
-            Ueberschlag := Ueberschlag + Erg[n] + ZwErg[n];
-            If Ueberschlag >= GNZ_GlobZahlenbasis then
-            begin
-              Erg[n] := Ueberschlag - GNZ_GlobZahlenbasis;
-              Ueberschlag := 1;
-            end else
-            begin
-              Erg[n] := Ueberschlag;
-              Ueberschlag := 0;
-            end;
-          end; //for n:=na to ErgMaxZeiger do
-          if ErgMaxZeiger<>na+bAnz then
-          begin
-            inc(ErgMaxZeiger);
-            Ueberschlag := Ueberschlag + ZwErg[ErgMaxZeiger];
-            If Ueberschlag >= GNZ_GlobZahlenbasis then
-            begin
-              Erg[ErgMaxZeiger] := Ueberschlag - GNZ_GlobZahlenbasis;
-              Ueberschlag := 1;
-            end else
-            begin
-              Erg[ErgMaxZeiger] := Ueberschlag;
-              Ueberschlag := 0;
-            end;
-          end; // if ErgMaxZeiger<>na+bAnz
-          if ErgMaxZeiger<>na+bAnz then                                //koennte auch in einer while-Schleife
-          begin                                                        //geloest werden, die sich dann max.
-            inc(ErgMaxZeiger);                                         //2x aufruft-->Langsam
-            Ueberschlag := Ueberschlag + ZwErg[ErgMaxZeiger];
-            If Ueberschlag >= GNZ_GlobZahlenbasis then
-            begin
-              Erg[ErgMaxZeiger] := Ueberschlag - GNZ_GlobZahlenbasis;
-              Ueberschlag := 1;
-            end else
-            begin
-              Erg[ErgMaxZeiger] := Ueberschlag;
-              Ueberschlag := 0;
-            end;
-          end; // if ErgMaxZeiger<>na+bAnz
-          If Ueberschlag=1 then
-          begin
-            inc(ErgMaxZeiger);
-            Erg[ErgMaxZeiger]:=1;
-          end;
-        end; //if na=0 else
-        //ENDE Optimierter Additionsalgorithmus
-      end;
+          end; //if na=0 else
+          //ENDE Optimierter Additionsalgorithmus
+        end;
 
-      //ZwErg[na]:=0;
-    end; //for aAnz
-    If Erg[aAnz+bAnz-1]=0 then setlength(Erg,aAnz+bAnz-1);
+        //ZwErg[na]:=0;
+      end; //for aAnz
+      If Erg[aAnz+bAnz-1]=0 then setlength(Erg,aAnz+bAnz-1);
+    end else  // nun: wenn a=0 oder b=0:
+    begin
+      setlength(Erg,1);
+      Erg[0]:=0;
+    end;
   end else     //if Karazuba
   begin
     If aAnz<bAnz then na:=bAnz else na:=aAnz;        //In na steht die Stellenanz. des laengsten.
@@ -1423,7 +855,6 @@ begin
   Result:=Erg;
 end; //GNZmul
 
-//{$endif}
 
 function TGnurz.GNZmulword(a:dword;b:GNZtyp):GNZTyp;
 var nb,bAnz,Ueberschlag: dword;
@@ -1876,8 +1307,8 @@ end; //GNZPotenz
 function TGnurz.GNZPotenzMod(Basis,Exponent,Modulo:GNZTyp):GNZTyp;
 var z,e,Erg,eins,zwei:GNZTyp;
 begin
-  z:=Basis;//copy(Basis);
-  e:=Exponent;//copy(Exponent);
+  z:=copy(Basis);
+  e:=copy(Exponent);
   setlength(eins,1);
   eins[0]:=1;
   Erg:=eins;
@@ -1920,36 +1351,32 @@ var Wurzk, Wurzkp1,GNZzwei,GNZn,ZwErg: GNZTyp;
     n,nbis:word;
     prim:boolean;
 begin
-  If GNZ_GlobZahlenbasis=2 then                                   //unabh. von GlobZahlenbasis
+  setlength(GNZzwei,1);                // GlobZahlenBasis muss >2 sein.
+  GNZzwei[0]:=2;
+  If (length(Zahl)>1)or(zahl[0]>4) then
   begin
-    setlength(GNZzwei,2);
-    GNZzwei[0]:=0; GNZzwei[1]:=1;
-  end else
-  begin
-    setlength(GNZzwei,1);
-    GNZzwei[0]:=2;
-  end;
-  If GNZmod(zahl,GNZzwei)[0] = 0 then prim:=false else
-  begin
-    prim:=true;
-    //Zunaechst wird die Wurzel von Zahl (ueber Newton-Verfahren) fuer den klassischen Primzahltest abgeschaetzt:
-    nbis:=length(zahl) div 2;
-    Wurzk:=GNZdiv(zahl,GNZzwei);
-    for n:=0 to nbis do
+    If GNZmod(zahl,GNZzwei)[0] = 0 then prim:=false else
     begin
-      Wurzkp1:=GNZadd(Wurzk,GNZdiv(zahl,Wurzk));
-      Wurzkp1:=GNZdiv(Wurzkp1,GNZzwei);
-      Wurzk:=copy(Wurzkp1);
-    end;
-    //Klassischer Primzahltest:
-    setlength(GNZn,1);
-    GNZn[0]:=1;
-    repeat
-      GNZn:=GNZadd(GNZn,GNZzwei);
-      ZwErg:=GNZmod(zahl,GNZn);
-      if (length(ZwErg)=1)and(ZwErg[0]=0) then prim:=false;
-    until (prim=false)or(GNZakleinerb(Wurzkp1,GNZn));
-  end; //if
+      prim:=true;
+      //Zunaechst wird die Wurzel von Zahl (ueber Newton-Verfahren) fuer den klassischen Primzahltest abgeschaetzt:
+      nbis:=length(zahl) div 2;
+      Wurzk:=GNZdiv(zahl,GNZzwei);
+      for n:=0 to nbis do
+      begin
+        Wurzkp1:=GNZadd(Wurzk,GNZdiv(zahl,Wurzk));
+        Wurzkp1:=GNZdiv(Wurzkp1,GNZzwei);
+        Wurzk:=copy(Wurzkp1);
+      end;
+      //Klassischer Primzahltest:
+      setlength(GNZn,1);
+      GNZn[0]:=1;
+      repeat
+        GNZn:=GNZadd(GNZn,GNZzwei);
+        ZwErg:=GNZmod(zahl,GNZn);
+        if (length(ZwErg)=1)and(ZwErg[0]=0) then prim:=false;
+      until (prim=false)or(GNZakleinerb(Wurzkp1,GNZn));
+    end; //if
+  end else prim:= (zahl[0]=2)or(zahl[0]=3);
   GNZIstPrim:=prim;
 end; //GNZIstPrim
 
@@ -2042,122 +1469,22 @@ begin
   Result:=Erg;
 end;  // GNZZufall
 
-
-//GGZ-Operatonen - Rechnen mit grossen Ganzen Zahlen  ---------------------------------------------------
-
-
-function TGnurz.GNZtoGGZ(NatZ:GNZTyp;Vorzeichen_positiv:boolean):GGZTyp;
+function TGnurz.GNZeins:GNZTyp;
+var ZwSp:GNZTyp;
 begin
-  Result.NatZ:=copy(NatZ);
-  Result.positiv:=Vorzeichen_positiv;
-end; // GNZtoGGZ
+  setlength(ZwSp,1);
+  ZwSp[0]:=1;
+  Result:=ZwSp;
+end;  // GNZeins
 
-
-function TGnurz.GGZtoGNZ(Zahl:GGZTyp):GNZTyp;
-begin Result:=Zahl.NatZ; end; //GGZtoGNZ
-
-
-function TGnurz.GGZadd(a,b:GGZTyp):GGZTyp;
+function TGnurz.GNZnull:GNZTyp;
+var ZwSp:GNZTyp;
 begin
-  If (a.positiv=true)and(b.positiv=true) then
-  begin
-    Result.NatZ:=GNZadd(a.NatZ,b.NatZ);
-    Result.positiv:=true;
-  end else if (a.positiv=false)and(b.positiv=false) then
-  begin
-    Result.NatZ:=GNZadd(a.NatZ,b.NatZ);
-    Result.positiv:=false;
-  end else if (a.positiv=true)and(b.positiv=false) then
-  begin
-    if GNZakleinerb(a.NatZ,b.NatZ) then
-    begin
-      Result.NatZ:=GNZsub(b.NatZ,a.NatZ);
-      Result.positiv:=false;
-    end else
-    begin
-      Result.NatZ:=GNZsub(a.NatZ,b.NatZ);
-      Result.positiv:=true;
-    end;
-  end else if (a.positiv=false)and(b.positiv=true) then
-  begin
-    if GNZakleinerb(a.NatZ,b.NatZ) then
-    begin
-      Result.NatZ:=GNZsub(b.NatZ,a.NatZ);
-      Result.positiv:=true;
-    end else
-    begin
-      Result.NatZ:=GNZsub(a.NatZ,b.NatZ);
-      Result.positiv:=false;
-    end;
-  end;
-end; // GGZadd
+  setlength(ZwSp,1);
+  ZwSp[0]:=0;
+  Result:=ZwSp;
+end;  // GNZnull
 
-
-function TGnurz.GGZsub(Minuent,Subtrahend:GGZTyp):GGZTyp;
-var a:GGZTyp;
-begin
-  a.NatZ:=copy(Subtrahend.NatZ);
-  a.positiv:=Subtrahend.positiv;
-  a.positiv:=not Subtrahend.positiv;
-  Result:=GGZadd(Minuent,a);
-end; //GGZsub
-
-
-function TGnurz.GGZmul(a,b:GGZTyp):GGZTyp;
-begin
-  Result.NatZ:=GNZmul(a.NatZ,b.NatZ);
-  if a.positiv=b.positiv then Result.positiv:=true else Result.positiv:=false;
-end; //GGZmul
-
-
-function TGnurz.GGZmulword(a:dword;b:GGZTyp):GGZTyp;
-begin
-  Result.positiv:=b.positiv;
-  Result.NatZ:=GNZmulword(a,b.NatZ);
-end; // GGZmulword
-
-
-function TGnurz.GGZakleinerb(a,b:GGZTyp):boolean;
-begin
-  If (a.positiv=true)and(b.positiv=true) then
-  begin
-    Result:=GNZakleinerb(a.NatZ,b.NatZ);
-  end else if (a.positiv=false)and(b.positiv=false) then
-  begin
-    Result:= not GNZakleinerb(a.NatZ,b.NatZ);
-  end else if (a.positiv=true)and(b.positiv=false) then
-  begin
-    Result:=false;
-  end else if (a.positiv=false)and(b.positiv=true) then
-  begin
-    Result:=true;
-  end;
-end; // GGZakleinerb
-
-
-function TGnurz.GGZagleichb(a,b:GGZTyp):boolean;
-begin
-  If a.positiv=b.positiv then Result:=GNZagleichb(a.NatZ,b.NatZ) else Result:=false;
-end;  //GGZagleichb
-
-
-function TGnurz.GGZdiv(Divident,Divisor:GGZTyp):GGZTyp;
-begin
-  Result.NatZ:=GNZdiv(Divident.NatZ,Divisor.NatZ);
-  if Divident.positiv=Divisor.positiv then Result.positiv:=true else Result.positiv:=false;
-end; //GGZmul
-
-
-function TGnurz.GGZistgerade(zahl:GGZTyp):boolean;
-begin
-  Result:=GNZistgerade(zahl.NatZ);
-end; // GGZistgerade
-
-
-function TGnurz.GGZmod(Divident,Divisor:GGZTyp):GGZTyp;
-begin
-  Result:=GGZsub(Divident,GGZmul(Divisor,GGZdiv(Divident,Divisor)));
-end; // GGZmod
 
 //GRaZ-Operatonen - Rechnen mit grossen Rationalen Zahlen  ---------------------------------------------------
 
@@ -2166,13 +1493,22 @@ function TGnurz.GRaZKuerzen(Bruch:GRaZTyp):GRaZTyp;
 var ZwSpGNZ:GNZTyp;
 begin
   //Eventuelles Kuerzen:
-  ZwSpGNZ:=GNZggt(Bruch.nenner,Bruch.zaehler);
-  If (length(ZwSpGNZ)=1)and(ZwSpGNZ[0]=1) then Result:=Bruch else
+  If (length(Bruch.zaehler)=1)and(Bruch.zaehler[0]=0) then
   begin
-    Result.zaehler:=GNZdiv(Bruch.zaehler,ZwSpGNZ);
-    Result.nenner:=GNZdiv(Bruch.nenner,ZwSpGNZ);
+    Result.zaehler :=GNZnull;
+    Result.nenner  :=GNZeins;
+    Result.Negativ :=false;
+  end else
+    begin
+    ZwSpGNZ:=GNZggt(Bruch.nenner,Bruch.zaehler);
+    If (length(ZwSpGNZ)=1)and(ZwSpGNZ[0]=1) then Result:=Bruch else
+    begin
+      Result.zaehler:=GNZdiv(Bruch.zaehler,ZwSpGNZ);
+      Result.nenner:=GNZdiv(Bruch.nenner,ZwSpGNZ);
+    end;
+    Result.Negativ:=Bruch.Negativ;
   end;
-end;
+end;  //GRaZKuerzen
 
 
 function TGnurz.GRaZadd(a,b:GRaZTyp):GRaZTyp;
@@ -2180,20 +1516,36 @@ var ZwSpGNZ:GNZTyp;
     Erg:GRaZTyp;
 begin
   ZwSpGNZ:=GNZkgv(a.nenner,b.nenner);     //Brueche auf einen Nenner bringen...
-  Erg.nenner:=ZwSpGNZ;
-  Erg.zaehler:=GNZadd(GNZmul(a.zaehler,GNZdiv(ZwSpGNZ,a.nenner)),GNZmul(b.zaehler,GNZdiv(ZwSpGNZ,b.nenner)));
+  If a.Negativ=b.Negativ then
+  begin
+    Erg.nenner:=ZwSpGNZ;
+    Erg.zaehler:=GNZadd(GNZmul(a.zaehler,GNZdiv(ZwSpGNZ,a.nenner)),GNZmul(b.zaehler,GNZdiv(ZwSpGNZ,b.nenner)));
+    Erg.Negativ:=a.Negativ;
+  end else
+  if GRaZakleinerbBetrag(a,b) then
+  begin
+    Erg.nenner:=ZwSpGNZ;
+    Erg.zaehler:=GNZsub(GNZmul(b.zaehler,GNZdiv(ZwSpGNZ,b.nenner)),GNZmul(a.zaehler,GNZdiv(ZwSpGNZ,a.nenner))); //b-a
+    Erg.Negativ:=b.Negativ;
+  end else
+  begin
+    Erg.nenner:=ZwSpGNZ;
+    Erg.zaehler:=GNZsub(GNZmul(a.zaehler,GNZdiv(ZwSpGNZ,a.nenner)),GNZmul(b.zaehler,GNZdiv(ZwSpGNZ,b.nenner))); //a-b
+    Erg.Negativ:=a.Negativ;
+    If (length(Erg.zaehler)=1)and(Erg.zaehler[0]=0) then
+    begin
+      Erg.nenner:=GNZeins;
+      Erg.Negativ:=false;
+    end;
+  end;
   Result:=GRaZKuerzen(Erg);
 end; //GRaZadd
 
 
-function TGnurz.GRazsub(Minuent,Subtrahend:GRaZTyp):GRaZTyp;   //Es muss Minuent>Subtrahend sein!
-var ZwSpGNZ:GNZTyp;
-    Erg:GRaZTyp;
+function TGnurz.GRazsub(Minuent,Subtrahend:GRaZTyp):GRaZTyp;
 begin
-  ZwSpGNZ:=GNZkgv(Minuent.nenner,Subtrahend.nenner);     //Brueche auf einen Nenner bringen...
-  Erg.nenner:=ZwSpGNZ;
-  Erg.zaehler:=GNZsub(GNZmul(Minuent.zaehler,GNZdiv(ZwSpGNZ,Minuent.nenner)),GNZmul(Subtrahend.zaehler,GNZdiv(ZwSpGNZ,Subtrahend.nenner)));
-  Result:=GRaZKuerzen(Erg);
+  Subtrahend.Negativ:=not Subtrahend.Negativ;
+  Result:=GRaZadd(Minuent,Subtrahend);
 end; //GRaZsub
 
 
@@ -2201,7 +1553,8 @@ function TGnurz.GRaZmul(a,b:GRaZTyp):GRaZTyp;
 var Erg:GRaZTyp;
 begin
   Erg.zaehler:=GNZmul(a.zaehler,b.zaehler);
-  Erg.nenner:=GNZmul(a.nenner,b.zaehler);
+  Erg.nenner:=GNZmul(a.nenner,b.nenner);
+  Erg.Negativ:= a.Negativ xor b.Negativ;
   Result:=GRaZKuerzen(Erg);
 end; //GRaZmul
 
@@ -2211,24 +1564,52 @@ var Erg:GRaZTyp;
 begin
   Erg.zaehler:=GNZmul(Divident.zaehler,Divisor.nenner);
   Erg.nenner:=GNZmul(Divident.nenner,Divisor.zaehler);
+  Erg.Negativ:= Divident.Negativ xor Divisor.Negativ;
   Result:=GRaZKuerzen(Erg);
 end; //GRaZdiv
+
+
+function TGnurz.GRaZakleinerbBetrag(a,b:GRaZTyp):boolean;
+var ZwSpGNZ:GNZTyp;
+begin
+  ZwSpGNZ:=GNZkgv(a.nenner,b.nenner);
+  Result:=GNZakleinerb(GNZmul(a.zaehler,GNZdiv(ZwSpGNZ,a.nenner)),GNZmul(b.zaehler,GNZdiv(ZwSpGNZ,b.nenner)));
+end; //GRaZakleinerbBetrag
 
 
 function TGnurz.GRaZakleinerb(a,b:GRaZTyp):boolean;
 var ZwSpGNZ:GNZTyp;
 begin
-  ZwSpGNZ:=GNZkgv(a.nenner,b.nenner);
-  Result:=GNZakleinerb(GNZmul(a.zaehler,GNZdiv(ZwSpGNZ,a.nenner)),GNZmul(b.zaehler,GNZdiv(ZwSpGNZ,b.nenner)));
+  If (a.Negativ)and(not b.Negativ) then Result:=true else if (not a.Negativ)and(b.Negativ) then Result:=false
+  else if (not a.Negativ)and(not b.Negativ) then
+  begin
+    ZwSpGNZ:=GNZkgv(a.nenner,b.nenner);
+    Result:=GNZakleinerb(GNZmul(a.zaehler,GNZdiv(ZwSpGNZ,a.nenner)),GNZmul(b.zaehler,GNZdiv(ZwSpGNZ,b.nenner)));
+  end else
+  begin
+    ZwSpGNZ:=GNZkgv(a.nenner,b.nenner);
+    Result:=GNZakleinerb(GNZmul(b.zaehler,GNZdiv(ZwSpGNZ,b.nenner)),GNZmul(a.zaehler,GNZdiv(ZwSpGNZ,a.nenner)));
+  end;
 end; //GRaZakleinerb
+
+
+function TGnurz.GRaZagleichbBetrag(a,b:GRaZTyp):boolean;
+var ZwSpGNZ:GNZTyp;
+begin
+  ZwSpGNZ:=GNZkgv(a.nenner,b.nenner);
+  Result:=GNZagleichb(GNZmul(a.zaehler,GNZdiv(ZwSpGNZ,a.nenner)),GNZmul(b.zaehler,GNZdiv(ZwSpGNZ,b.nenner)));
+end; //GRaZagleichbBetrag
 
 
 function TGnurz.GRaZagleichb(a,b:GRaZTyp):boolean;
 var ZwSpGNZ:GNZTyp;
 begin
-  ZwSpGNZ:=GNZkgv(a.nenner,b.nenner);
-  Result:=GNZagleichb(GNZmul(a.zaehler,GNZdiv(ZwSpGNZ,a.nenner)),GNZmul(b.zaehler,GNZdiv(ZwSpGNZ,b.nenner)));
-end; //GRaZagleichb
+  If a.Negativ=b.Negativ then
+  begin
+    ZwSpGNZ:=GNZkgv(a.nenner,b.nenner);
+    Result:=GNZagleichb(GNZmul(a.zaehler,GNZdiv(ZwSpGNZ,a.nenner)),GNZmul(b.zaehler,GNZdiv(ZwSpGNZ,b.nenner)));
+  end else Result:=false;
+end; //GRaZagleichb 
 
 
 end.

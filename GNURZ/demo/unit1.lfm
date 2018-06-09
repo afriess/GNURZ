@@ -3,25 +3,25 @@ object Form1: TForm1
   Height = 337
   Top = 132
   Width = 876
-  HorzScrollBar.Page = 875
-  VertScrollBar.Page = 336
   ActiveControl = Edit1
-  Caption = 'Form1'
+  Caption = 'GNURZ-Demo'
   ClientHeight = 337
   ClientWidth = 876
+  OnClose = FormClose
   OnCreate = FormCreate
+  LCLVersion = '0.9.27'
   object GroupBox1: TGroupBox
     Left = 8
     Height = 315
     Top = 13
     Width = 426
     Caption = 'Natuerliche Zahlen'
-    ClientHeight = 294
+    ClientHeight = 296
     ClientWidth = 422
     TabOrder = 0
     object Label1: TLabel
       Left = 8
-      Height = 17
+      Height = 18
       Top = 7
       Width = 24
       Caption = 'a:='
@@ -29,7 +29,7 @@ object Form1: TForm1
     end
     object Label2: TLabel
       Left = 8
-      Height = 17
+      Height = 18
       Top = 40
       Width = 24
       Caption = 'b:='
@@ -37,9 +37,9 @@ object Form1: TForm1
     end
     object Label3: TLabel
       Left = 9
-      Height = 17
-      Top = 201
-      Width = 68
+      Height = 18
+      Top = 236
+      Width = 61
       Caption = 'Ergebnis:'
       ParentColor = False
     end
@@ -49,6 +49,7 @@ object Form1: TForm1
       Top = 7
       Width = 353
       OnChange = Edit1Change
+      OnKeyPress = Edit1KeyPress
       TabOrder = 0
       Text = '1723645876581734555532847625181233423'
     end
@@ -58,13 +59,14 @@ object Form1: TForm1
       Top = 37
       Width = 353
       OnChange = Edit2Change
+      OnKeyPress = Edit2KeyPress
       TabOrder = 1
       Text = '4236546721354'
     end
     object Button1: TButton
       Left = 8
       Height = 48
-      Top = 64
+      Top = 99
       Width = 404
       Caption = 'a und b uebernehmen'
       OnClick = Button1Click
@@ -73,7 +75,7 @@ object Form1: TForm1
     object Button2: TButton
       Left = 8
       Height = 26
-      Top = 120
+      Top = 155
       Width = 58
       Caption = 'a + b'
       Enabled = False
@@ -83,7 +85,7 @@ object Form1: TForm1
     object Button3: TButton
       Left = 70
       Height = 26
-      Top = 120
+      Top = 155
       Width = 58
       Caption = 'a - b'
       Enabled = False
@@ -93,7 +95,7 @@ object Form1: TForm1
     object Button4: TButton
       Left = 134
       Height = 26
-      Top = 120
+      Top = 155
       Width = 58
       Caption = 'a * b'
       Enabled = False
@@ -103,7 +105,7 @@ object Form1: TForm1
     object Button5: TButton
       Left = 198
       Height = 26
-      Top = 120
+      Top = 155
       Width = 58
       Caption = 'a div b'
       Enabled = False
@@ -113,7 +115,7 @@ object Form1: TForm1
     object Button6: TButton
       Left = 262
       Height = 26
-      Top = 120
+      Top = 155
       Width = 64
       Caption = 'a mod b'
       Enabled = False
@@ -123,7 +125,7 @@ object Form1: TForm1
     object Button7: TButton
       Left = 86
       Height = 26
-      Top = 160
+      Top = 195
       Width = 72
       Caption = 'ggT(a,b)'
       Enabled = False
@@ -133,7 +135,7 @@ object Form1: TForm1
     object Button8: TButton
       Left = 8
       Height = 26
-      Top = 160
+      Top = 195
       Width = 70
       Caption = 'kgV(a,b)'
       Enabled = False
@@ -143,7 +145,7 @@ object Form1: TForm1
     object Edit3: TEdit
       Left = 8
       Height = 22
-      Top = 224
+      Top = 259
       Width = 404
       TabOrder = 10
     end
@@ -154,12 +156,12 @@ object Form1: TForm1
     Top = 13
     Width = 426
     Caption = 'Rationale Zahlen'
-    ClientHeight = 294
+    ClientHeight = 296
     ClientWidth = 422
     TabOrder = 1
     object Label4: TLabel
       Left = 8
-      Height = 17
+      Height = 18
       Top = 7
       Width = 23
       Caption = 'c:='
@@ -167,41 +169,41 @@ object Form1: TForm1
     end
     object Label5: TLabel
       Left = 8
-      Height = 17
+      Height = 18
       Top = 40
       Width = 24
       Caption = 'd:='
       ParentColor = False
     end
     object Label6: TLabel
-      Left = 9
-      Height = 17
-      Top = 201
-      Width = 68
+      Left = 13
+      Height = 18
+      Top = 238
+      Width = 61
       Caption = 'Ergebnis:'
       ParentColor = False
     end
     object Label7: TLabel
       Left = 228
-      Height = 17
+      Height = 18
       Top = 8
-      Width = 6
+      Width = 5
       Caption = '/'
       ParentColor = False
     end
     object Label8: TLabel
       Left = 228
-      Height = 17
+      Height = 18
       Top = 37
-      Width = 6
+      Width = 5
       Caption = '/'
       ParentColor = False
     end
     object Label9: TLabel
-      Left = 206
-      Height = 17
-      Top = 226
-      Width = 6
+      Left = 210
+      Height = 18
+      Top = 263
+      Width = 5
       Caption = '/'
       ParentColor = False
     end
@@ -211,6 +213,7 @@ object Form1: TForm1
       Top = 7
       Width = 164
       OnChange = Edit4Change
+      OnKeyPress = Edit4KeyPress
       TabOrder = 0
       Text = '17236458765817345'
     end
@@ -220,22 +223,23 @@ object Form1: TForm1
       Top = 37
       Width = 164
       OnChange = Edit5Change
+      OnKeyPress = Edit5KeyPress
       TabOrder = 1
       Text = '4236546721354'
     end
     object Button9: TButton
-      Left = 8
+      Left = 12
       Height = 48
-      Top = 61
+      Top = 98
       Width = 404
       Caption = 'c und d uebernehmen'
       OnClick = Button9Click
       TabOrder = 2
     end
     object Button10: TButton
-      Left = 8
+      Left = 12
       Height = 26
-      Top = 120
+      Top = 157
       Width = 58
       Caption = 'c + d'
       Enabled = False
@@ -243,9 +247,9 @@ object Form1: TForm1
       TabOrder = 3
     end
     object Button11: TButton
-      Left = 70
+      Left = 74
       Height = 26
-      Top = 120
+      Top = 157
       Width = 58
       Caption = 'c - d'
       Enabled = False
@@ -253,9 +257,9 @@ object Form1: TForm1
       TabOrder = 4
     end
     object Button12: TButton
-      Left = 134
+      Left = 138
       Height = 26
-      Top = 120
+      Top = 157
       Width = 58
       Caption = 'c * d'
       Enabled = False
@@ -263,9 +267,9 @@ object Form1: TForm1
       TabOrder = 5
     end
     object Button13: TButton
-      Left = 198
+      Left = 202
       Height = 26
-      Top = 120
+      Top = 157
       Width = 58
       Caption = 'c : d'
       Enabled = False
@@ -273,9 +277,9 @@ object Form1: TForm1
       TabOrder = 6
     end
     object Edit6: TEdit
-      Left = 4
+      Left = 8
       Height = 22
-      Top = 224
+      Top = 261
       Width = 200
       TabOrder = 7
     end
@@ -285,6 +289,7 @@ object Form1: TForm1
       Top = 7
       Width = 164
       OnChange = Edit7Change
+      OnKeyPress = Edit7KeyPress
       TabOrder = 8
       Text = '635454981'
     end
@@ -294,13 +299,14 @@ object Form1: TForm1
       Top = 37
       Width = 164
       OnChange = Edit8Change
+      OnKeyPress = Edit8KeyPress
       TabOrder = 9
       Text = '57853912122'
     end
     object Button14: TButton
-      Left = 8
+      Left = 12
       Height = 26
-      Top = 152
+      Top = 189
       Width = 85
       Caption = 'c kuerzen'
       Enabled = False
@@ -308,9 +314,9 @@ object Form1: TForm1
       TabOrder = 10
     end
     object Button15: TButton
-      Left = 101
+      Left = 105
       Height = 26
-      Top = 152
+      Top = 189
       Width = 85
       Caption = 'd kuerzen'
       Enabled = False
@@ -318,11 +324,29 @@ object Form1: TForm1
       TabOrder = 11
     end
     object Edit9: TEdit
-      Left = 216
+      Left = 220
       Height = 22
-      Top = 224
+      Top = 261
       Width = 200
       TabOrder = 12
+    end
+    object CheckBox1: TCheckBox
+      Left = 59
+      Height = 22
+      Top = 70
+      Width = 104
+      Caption = 'c ist negativ'
+      OnChange = CheckBox1Change
+      TabOrder = 13
+    end
+    object CheckBox2: TCheckBox
+      Left = 240
+      Height = 22
+      Top = 70
+      Width = 105
+      Caption = 'd ist negativ'
+      OnChange = CheckBox2Change
+      TabOrder = 14
     end
   end
 end
